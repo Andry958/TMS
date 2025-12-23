@@ -25,6 +25,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<TMSDbContext>(options =>
+    options.UseSqlServer(connStr,
+        b => b.MigrationsAssembly("DataAccess")));
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>

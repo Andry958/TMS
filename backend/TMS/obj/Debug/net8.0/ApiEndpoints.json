@@ -18,7 +18,7 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "company",
+        "Name": "dto",
         "Type": "BusinessLogic.DTOs.PostCompanyDTO",
         "IsRequired": true
       }
@@ -55,8 +55,56 @@
         "IsRequired": true
       },
       {
-        "Name": "company",
+        "Name": "dto",
         "Type": "BusinessLogic.DTOs.PostCompanyDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TMS.Controllers.TrackingController",
+    "Method": "AddTracking",
+    "RelativePath": "api/Tracking",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TMS.Controllers.AddTrackingDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TMS.Controllers.TrackingController",
+    "Method": "GetTrackingById",
+    "RelativePath": "api/Tracking/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TMS.Controllers.TrackingController",
+    "Method": "GetTrackingsByCompanyId",
+    "RelativePath": "api/Tracking/company/{companyId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "companyId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

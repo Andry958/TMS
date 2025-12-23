@@ -1,166 +1,33 @@
 import { useState, useEffect } from "react";
 import { useCompany } from "../context/CompanyContext";
+import CompanyForm from "../components/CompanyForm";
 
 const API_URL = "https://localhost:7060/api/company";
 
-/* ================= ВАЛЮТИ ================= */
 const currencies = [
-  { code: "AUD", name: "Австралійський долар" },
-  { code: "UAH", name: "Українська гривня" },
-  { code: "AZN", name: "Азербайджанський манат" },
-  { code: "DZD", name: "Алжирський динар" },
-  { code: "THB", name: "Бат" },
-  { code: "BGN", name: "Болгарський лев" },
-  { code: "KRW", name: "Вона" },
-  { code: "HKD", name: "Гонконгівський долар" },
-  { code: "DKK", name: "Данська крона" },
-  { code: "AED", name: "Дирхам ОАЕ" },
-  { code: "USD", name: "Долар США" },
-  { code: "VND", name: "Донг" },
-  { code: "EUR", name: "Євро" },
-  { code: "EGP", name: "Єгипетський фунт" },
-  { code: "JPY", name: "Єна" },
-  { code: "PLN", name: "Злотий" },
-  { code: "INR", name: "Індійська рупія" },
-  { code: "CAD", name: "Канадський долар" },
-  { code: "GEL", name: "Ларі" },
-  { code: "LBP", name: "Ліванський фунт" },
-  { code: "MYR", name: "Малайзійський ринггіт" },
-  { code: "MXN", name: "Мексиканське песо" },
-  { code: "MDL", name: "Молдовський лей" },
-  { code: "ILS", name: "Новий ізраїльський шекель" },
-  { code: "NZD", name: "Новозеландський долар" },
-  { code: "NOK", name: "Норвезька крона" },
-  { code: "ZAR", name: "Ренд" },
-  { code: "RON", name: "Румунський лей" },
-  { code: "IDR", name: "Рупія" },
-  { code: "SAR", name: "Саудівський ріял" },
-  { code: "RSD", name: "Сербський динар" },
-  { code: "SGD", name: "Сінгапурський долар" },
-  { code: "BDT", name: "Така" },
-  { code: "KZT", name: "Теньге" },
-  { code: "TND", name: "Туніський динар" },
-  { code: "TRY", name: "Турецька ліра" },
-  { code: "HUF", name: "Форинт" },
-  { code: "GBP", name: "Фунт стерлінгів" },
-  { code: "CZK", name: "Чеська крона" },
-  { code: "SEK", name: "Шведська крона" },
-  { code: "CHF", name: "Швейцарський франк" },
-  { code: "CNY", name: "Юань Женьміньбі" },
-  { code: "XDR", name: "СПЗ (спеціальні права запозичення)" }
+  { code: 0, name: "UAH - Українська гривня" },
+  { code: 1, name: "USD - Долар США" },
+  { code: 2, name: "EUR - Євро" },
+  { code: 3, name: "PLN - Злотий" },
+  { code: 4, name: "GBP - Фунт стерлінгів" }
 ];
 
-/* ================= UI КОМПОНЕНТИ ================= */
+const accountTypes = [
+  { value: 0, name: "Гривневий" },
+  { value: 1, name: "Валютний" }
+];
+
 function Section({ title, children }) {
   return (
-    <div className="card shadow-sm mb-4">
+    <div className="card shadow-sm h-100">
       <div className="card-body">
         <h5 className="mb-3">{title}</h5>
-        <div className="row g-3">{children}</div>
+        {children}
       </div>
     </div>
   );
 }
 
-function Input({ label, name, type = "text", value, onChange }) {
-  return (
-    <div className="col-md-6">
-      <label className="form-label">{label}</label>
-      <input
-        className="form-control"
-        name={name}
-        type={type}
-        value={value || ""}
-        onChange={onChange}
-      />
-    </div>
-  );
-}
-
-function TextArea({ label, name, value, onChange }) {
-  return (
-    <div className="col-12">
-      <label className="form-label">{label}</label>
-      <textarea
-        className="form-control"
-        rows="3"
-        name={name}
-        value={value || ""}
-        onChange={onChange}
-      />
-    </div>
-  );
-}
-
-function CurrencySelect({ value, onChange }) {
-  const [search, setSearch] = useState("");
-  const [open, setOpen] = useState(false);
-
-  const selected = currencies.find(c => c.code === value);
-
-  const filtered = currencies.filter(c =>
-    c.code.toLowerCase().includes(search.toLowerCase()) ||
-    c.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  return (
-    <div className="col-md-6 position-relative">
-      <label className="form-label">Валюта</label>
-
-      <div
-        className="form-control d-flex align-items-center justify-content-between"
-        style={{ cursor: "pointer" }}
-        onClick={() => setOpen(prev => !prev)}
-      >
-        <span>
-          {selected ? `${selected.code} — ${selected.name}` : "Оберіть валюту"}
-        </span>
-        <span>▾</span>
-      </div>
-
-      {open && (
-        <div
-          className="border rounded mt-1 bg-white shadow-sm position-absolute w-100"
-          style={{ zIndex: 1000, maxHeight: "250px", overflowY: "auto" }}
-        >
-          <input
-            type="text"
-            className="form-control border-0 border-bottom"
-            placeholder="Пошук (USD, Євро...)"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            autoFocus
-          />
-
-          {filtered.length === 0 && (
-            <div className="px-3 py-2 text-muted">
-              Нічого не знайдено
-            </div>
-          )}
-
-          {filtered.map(c => (
-            <div
-              key={c.code}
-              className="px-3 py-2 currency-item"
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                onChange(c.code);
-                setOpen(false);
-                setSearch("");
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = "#f1f3f5"}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-            >
-              {c.code} — {c.name}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ================= СТОРІНКА ================= */
 function EditCompanyPage({ setActiveSection }) {
   const { companyId } = useCompany();
   const [form, setForm] = useState(null);
@@ -175,7 +42,60 @@ function EditCompanyPage({ setActiveSection }) {
     fetch(`${API_URL}/${companyId}`)
       .then(res => res.json())
       .then(data => {
-        setForm(data);
+        setForm({
+          name: data.name,
+          companyType: data.companyType,
+          codeCompany: data.codeCompany,
+          ipn: data.ipn,
+          taxSystem: data.taxSystem,
+          additionalInfo: data.additionalInfo,
+          logoPath: data.logoPath,
+
+          phoneNumber: data.contact?.phoneNumber,
+          email: data.contact?.email,
+          website: data.contact?.website,
+
+          legalAddress_Country: data.legalAddress?.country,
+          legalAddress_City: data.legalAddress?.city,
+          legalAddress_Region: data.legalAddress?.region,
+          legalAddress_PostalCode: data.legalAddress?.postalCode,
+          legalAddress_StreetAddress: data.legalAddress?.streetAddress,
+          legalAddress_BuildingNumber: data.legalAddress?.buildingNumber,
+          legalAddress_ApartmentNumber: data.legalAddress?.apartmentNumber,
+
+          postalAddress_Country: data.postalAddress?.country,
+          postalAddress_City: data.postalAddress?.city,
+          postalAddress_Region: data.postalAddress?.region,
+          postalAddress_PostalCode: data.postalAddress?.postalCode,
+          postalAddress_StreetAddress: data.postalAddress?.streetAddress,
+          postalAddress_BuildingNumber: data.postalAddress?.buildingNumber,
+          postalAddress_ApartmentNumber: data.postalAddress?.apartmentNumber,
+
+          actualAddress_Country: data.actualAddress?.country,
+          actualAddress_City: data.actualAddress?.city,
+          actualAddress_Region: data.actualAddress?.region,
+          actualAddress_PostalCode: data.actualAddress?.postalCode,
+          actualAddress_StreetAddress: data.actualAddress?.streetAddress,
+          actualAddress_BuildingNumber: data.actualAddress?.buildingNumber,
+          actualAddress_ApartmentNumber: data.actualAddress?.apartmentNumber,
+
+          directorFullName: data.management?.directorFullName,
+          accountantFullName: data.management?.accountantFullName,
+
+          bankDetails: (data.bankDetails || []).map(bd => ({
+            typeAccount: bd.typeAccount,
+            currency: bd.currency,
+            bankName: bd.bankName,
+            bankMfo: bd.bankMfo,
+            iban: bd.iban,
+            swift: bd.swift,
+            bankOfBeneficiary: bd.bankOfBeneficiary,
+            correspondentBanks: bd.correspondentBanks || []
+          })),
+
+          apiNovaPoshtaKey: data.apiKeys?.novaPoshta,
+          apiLardyTransKey: data.apiKeys?.lardyTrans
+        });
         setLoading(false);
       })
       .catch(err => {
@@ -188,6 +108,89 @@ function EditCompanyPage({ setActiveSection }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleBankChange = (index, field, value) => {
+    setForm(prev => {
+      const newBankDetails = [...prev.bankDetails];
+      if (field === 'typeAccount') {
+        const typeVal = value;
+        if (typeVal === 0) {
+          newBankDetails[index] = {
+            ...newBankDetails[index],
+            typeAccount: 0,
+            currency: 0,
+            iban: "",
+            swift: "",
+            bankOfBeneficiary: "",
+            correspondentBanks: []
+          };
+        } else {
+          newBankDetails[index] = { ...newBankDetails[index], typeAccount: typeVal };
+        }
+      } else {
+        newBankDetails[index] = { ...newBankDetails[index], [field]: value };
+      }
+      return { ...prev, bankDetails: newBankDetails };
+    });
+  };
+
+  const addCorrespondentBank = (bankIndex) => {
+    setForm(prev => {
+      const newBankDetails = [...prev.bankDetails];
+      const bank = { ...newBankDetails[bankIndex] };
+      bank.correspondentBanks = [...(bank.correspondentBanks || []), { bankName: "", swift: "" }];
+      newBankDetails[bankIndex] = bank;
+      return { ...prev, bankDetails: newBankDetails };
+    });
+  };
+
+  const removeCorrespondentBank = (bankIndex, cbIndex) => {
+    setForm(prev => {
+      const newBankDetails = [...prev.bankDetails];
+      const bank = { ...newBankDetails[bankIndex] };
+      bank.correspondentBanks = (bank.correspondentBanks || []).filter((_, i) => i !== cbIndex);
+      newBankDetails[bankIndex] = bank;
+      return { ...prev, bankDetails: newBankDetails };
+    });
+  };
+
+  const handleCorrespondentBankChange = (bankIndex, cbIndex, field, value) => {
+    setForm(prev => {
+      const newBankDetails = [...prev.bankDetails];
+      const bank = { ...newBankDetails[bankIndex] };
+      const cbs = [...(bank.correspondentBanks || [])];
+      cbs[cbIndex] = { ...cbs[cbIndex], [field]: value };
+      bank.correspondentBanks = cbs;
+      newBankDetails[bankIndex] = bank;
+      return { ...prev, bankDetails: newBankDetails };
+    });
+  };
+
+  const addBankAccount = () => {
+    setForm(prev => ({
+      ...prev,
+      bankDetails: [
+        ...prev.bankDetails,
+        {
+          typeAccount: 0,
+          currency: 0,
+          bankName: "",
+          bankMfo: "",
+          iban: "",
+          swift: "",
+          bankOfBeneficiary: "",
+          correspondentBanks: []
+        }
+      ]
+    }));
+  };
+
+  const removeBankAccount = (index) => {
+    setForm(prev => ({
+      ...prev,
+      bankDetails: prev.bankDetails.filter((_, i) => i !== index)
+    }));
   };
 
   const handleSubmit = async () => {
@@ -236,175 +239,18 @@ function EditCompanyPage({ setActiveSection }) {
         </button>
       </div>
 
-      <Section title="Основна інформація">
-        <Input 
-          label="Назва компанії" 
-          name="name" 
-          value={form.name}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Тип компанії (ТОВ, ПП)" 
-          name="companyType" 
-          value={form.companyType}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="ЄДРПОУ" 
-          name="codeCompany" 
-          value={form.codeCompany}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="ІПН" 
-          name="ipn" 
-          value={form.ipn}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Система оподаткування" 
-          name="taxSystem" 
-          value={form.taxSystem}
-          onChange={handleChange} 
-        />
-        <CurrencySelect
-          value={form.currency}
-          onChange={(val) => setForm(prev => ({ ...prev, currency: val }))}
-        />
-      </Section>
-
-      <Section title="Керівництво">
-        <Input 
-          label="Директор" 
-          name="directorFullName" 
-          value={form.directorFullName}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Бухгалтер" 
-          name="accountantFullName" 
-          value={form.accountantFullName}
-          onChange={handleChange} 
-        />
-      </Section>
-
-      <Section title="Контакти">
-        <Input 
-          label="Телефон" 
-          name="phoneNumber" 
-          value={form.phoneNumber}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Email" 
-          name="email" 
-          type="email" 
-          value={form.email}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Вебсайт" 
-          name="website" 
-          value={form.website}
-          onChange={handleChange} 
-        />
-      </Section>
-
-      <Section title="Адреси">
-        <Input 
-          label="Країна" 
-          name="country" 
-          value={form.country}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Регіон" 
-          name="region" 
-          value={form.region}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Місто" 
-          name="city" 
-          value={form.city}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Поштовий індекс" 
-          name="postalCode" 
-          value={form.postalCode}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Юридична адреса" 
-          name="legalAddress" 
-          value={form.legalAddress}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Вулиця" 
-          name="streetAddress" 
-          value={form.streetAddress}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Будинок" 
-          name="buildingNumber" 
-          value={form.buildingNumber}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Квартира" 
-          name="apartmentNumber" 
-          value={form.apartmentNumber}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="Поштова адреса" 
-          name="postalAddress" 
-          value={form.postalAddress}
-          onChange={handleChange} 
-        />
-      </Section>
-
-      <Section title="Банківські реквізити">
-        <Input 
-          label="IBAN" 
-          name="bankAccountNumber" 
-          value={form.bankAccountNumber}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="МФО" 
-          name="bankMfo" 
-          value={form.bankMfo}
-          onChange={handleChange} 
-        />
-      </Section>
-
-      <Section title="Додаткова інформація">
-        <TextArea 
-          label="Коментар / примітки" 
-          name="additionalInfo" 
-          value={form.additionalInfo}
-          onChange={handleChange} 
-        />
-      </Section>
-
-      <Section title="API інтеграції">
-        <Input 
-          label="Nova Poshta API" 
-          name="apiNovaPoshtaKey" 
-          value={form.apiNovaPoshtaKey}
-          onChange={handleChange} 
-        />
-        <Input 
-          label="LardyTrans API" 
-          name="apiLardyTransKey" 
-          value={form.apiLardyTransKey}
-          onChange={handleChange} 
-        />
-      </Section>
+      <CompanyForm
+        form={form}
+        handleChange={handleChange}
+        handleBankChange={handleBankChange}
+        addBankAccount={addBankAccount}
+        removeBankAccount={removeBankAccount}
+        addCorrespondentBank={addCorrespondentBank}
+        removeCorrespondentBank={removeCorrespondentBank}
+        handleCorrespondentBankChange={handleCorrespondentBankChange}
+        currencies={currencies}
+        accountTypes={accountTypes}
+      />
 
       <div className="d-flex gap-2 mt-4 mb-5">
         <button className="btn btn-success" onClick={handleSubmit}>

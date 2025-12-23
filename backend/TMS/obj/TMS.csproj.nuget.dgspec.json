@@ -28,7 +28,11 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\111\\Desktop\\TMS-Emal\\backend\\DataAccess\\DataAccess.csproj": {
+                "projectPath": "C:\\Users\\111\\Desktop\\TMS-Emal\\backend\\DataAccess\\DataAccess.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

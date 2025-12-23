@@ -9,3 +9,8 @@ C:\Users\111\Desktop\TMS-Emal\backend\BusinessLogic\obj\Debug\net8.0\BusinessLog
 C:\Users\111\Desktop\TMS-Emal\backend\BusinessLogic\obj\Debug\net8.0\refint\BusinessLogic.dll
 C:\Users\111\Desktop\TMS-Emal\backend\BusinessLogic\obj\Debug\net8.0\BusinessLogic.pdb
 C:\Users\111\Desktop\TMS-Emal\backend\BusinessLogic\obj\Debug\net8.0\ref\BusinessLogic.dll
+C:\Users\111\Desktop\TMS-Emal\backend\BusinessLogic\obj\Debug\net8.0\BusinessLogic.sourcelink.json
+C:\Users\111\Desktop\TMS-Emal\backend\BusinessLogic\bin\Debug\net8.0\DataAccess.dll
+C:\Users\111\Desktop\TMS-Emal\backend\BusinessLogic\bin\Debug\net8.0\DataAccess.pdb
+C:\Users\111\Desktop\TMS-Emal\backend\BusinessLogic\obj\Debug\net8.0\BusinessLogic.csproj.AssemblyReference.cache
+C:\Users\111\Desktop\TMS-Emal\backend\BusinessLogic\obj\Debug\net8.0\Business.CF5D6E35.Up2Date

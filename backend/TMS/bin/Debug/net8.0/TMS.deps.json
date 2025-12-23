@@ -999,6 +999,9 @@
         }
       },
       "BusinessLogic/1.0.0": {
+        "dependencies": {
+          "DataAccess": "1.0.0"
+        },
         "runtime": {
           "BusinessLogic.dll": {
             "assemblyVersion": "1.0.0",
