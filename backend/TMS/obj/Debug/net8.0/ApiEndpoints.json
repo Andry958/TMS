@@ -80,9 +80,9 @@
   },
   {
     "ContainingType": "TMS.Controllers.TrackingController",
-    "Method": "GetTrackingById",
+    "Method": "DeleteTracking",
     "RelativePath": "api/Tracking/{id}",
-    "HttpMethod": "GET",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -99,6 +99,53 @@
     "Method": "GetTrackingsByCompanyId",
     "RelativePath": "api/Tracking/company/{companyId}",
     "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "companyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "page",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "sortOrder",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TMS.Controllers.TrackingController",
+    "Method": "BulkUpdatePaymentInfo",
+    "RelativePath": "api/Tracking/payment/bulk",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updates",
+        "Type": "System.Collections.Generic.List\u00601[[TMS.Controllers.UpdatePaymentDto, TMS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TMS.Controllers.TrackingController",
+    "Method": "RefreshNPData",
+    "RelativePath": "api/Tracking/refresh-np/{companyId}",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [

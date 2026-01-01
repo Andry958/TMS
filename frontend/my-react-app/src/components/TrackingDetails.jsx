@@ -130,12 +130,13 @@ function TrackingDetails({ tracking, onClose }) {
               <div className="col-md-6">
                 <h6 className="fw-bold mb-3">Дати доставки</h6>
                 <dl className="row mb-0">
-                  <dt className="col-sm-5">Планова</dt>
-                  <dd className="col-sm-7">{formatDate(tracking.ScheduledDeliveryDate)}</dd>
-                  <dt className="col-sm-5">Фактична</dt>
-                  <dd className="col-sm-7">{formatDate(tracking.ActualDeliveryDate)}</dd>
                   <dt className="col-sm-5">Дата отримання</dt>
                   <dd className="col-sm-7">{formatDate(tracking.RecipientDateTime)}</dd>
+                  <dt className="col-sm-5">Фактична</dt>
+                  <dd className="col-sm-7">{formatDate(tracking.ActualDeliveryDate)}</dd>
+                  <dt className="col-sm-5">Планова</dt>
+                  <dd className="col-sm-7">{formatDate(tracking.ScheduledDeliveryDate)}</dd>
+
                 </dl>
               </div>
 

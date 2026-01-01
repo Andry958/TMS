@@ -4,6 +4,7 @@ using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(TMSDbContext))]
-    partial class TMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251223140943_6")]
+    partial class _6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,9 +72,6 @@ namespace DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
@@ -85,9 +85,6 @@ namespace DataAccess.Migrations
                     b.Property<string>("DeliveryDate")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("InvoiceNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -95,26 +92,14 @@ namespace DataAccess.Migrations
                     b.Property<int?>("OverdueDays")
                         .HasColumnType("int");
 
-                    b.Property<string>("Payer")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("PaymentDueDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("PaymentMark")
-                        .HasColumnType("bit");
 
                     b.Property<string>("RecipientFullName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Route")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Vehicle")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

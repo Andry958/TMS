@@ -1,6 +1,5 @@
 ﻿using DataAccess.Data;
 using DataAccess.Data.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -12,226 +11,225 @@ namespace TMS.Controllers
     [ApiController]
     public class TrackingController : ControllerBase
     {
-        private readonly TMSDbContext ctx;
+        private readonly TMSDbContext _ctx;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public TrackingController(TMSDbContext context)
+        public TrackingController(TMSDbContext context, IHttpClientFactory httpClientFactory)
         {
-            ctx = context;
+            _ctx = context;
+            _httpClientFactory = httpClientFactory;
         }
-        //[HttpGet]
-        //public IActionResult GetAllTrackings()
-        //{
-        //    var trackings = ctx.Trackings.ToList();
-        //    return Ok(trackings);
-        //}
-        // id
-        [HttpGet("{id}")]
-        public IActionResult GetTrackingById(int id)
-        {
-            var tracking = ctx.Trackings.Find(id);
-            if (tracking == null)
-            {
-                return NotFound();
-            }
-            return Ok(tracking);
-        }
+
+        // ================= GET BY COMPANY WITH PAGINATION =================
         [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetTrackingsByCompanyId(int companyId)
+        public async Task<IActionResult> GetTrackingsByCompanyId(
+            int companyId,
+            [FromQuery] int? page = null,
+            [FromQuery] int? pageSize = null,
+            [FromQuery] string sortOrder = "desc")
         {
-            var company = await ctx.Companies
-                .Include(c => c.CompanyTrackings)
-                .Include(c => c.ApiKeys)
-                .FirstOrDefaultAsync(c => c.Id == companyId);
+            var companyExists = await _ctx.Companies.AnyAsync(c => c.Id == companyId);
+            if (!companyExists) return NotFound("Company not found");
 
-            if (company == null)
-                return NotFound("Company not found");
+            var query = _ctx.Trackings
+                .Where(t => t.CompanyId == companyId)
+                .AsQueryable();
 
-            foreach (var tracking in company.CompanyTrackings)
+            query = sortOrder?.ToLower() == "asc"
+                ? query.OrderBy(t => t.Id)
+                : query.OrderByDescending(t => t.Id);
+
+            if (!page.HasValue || !pageSize.HasValue)
             {
-                var np = await LoadFromNovaPoshta(tracking.Number, company.ApiKeys.NovaPoshta);
-                if (np == null)
-                    continue;
-
-                // 🔄 оновлення полів
-                tracking.Status = np.Status;
-                tracking.StatusCode = np.StatusCode;
-                tracking.TrackingUpdateDate = np.TrackingUpdateDate;
-                tracking.ActualDeliveryDate = np.ActualDeliveryDate;
-                tracking.RecipientDateTime = np.RecipientDateTime;
-                tracking.ExpressWaybillPaymentStatus = np.ExpressWaybillPaymentStatus;
-                tracking.ExpressWaybillAmountToPay = np.ExpressWaybillAmountToPay;
+                var allItems = await query.AsNoTracking().ToListAsync();
+                return Ok(allItems);
             }
 
-            await ctx.SaveChangesAsync();
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((page.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value)
+                .AsNoTracking()
+                .ToListAsync();
 
-            return Ok(company.CompanyTrackings);
+            return Ok(new
+            {
+                Items = items,
+                CurrentPage = page.Value,
+                PageSize = pageSize.Value,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize.Value)
+            });
         }
 
+        // ================= ADD TRACKING =================
         [HttpPost]
-        public IActionResult AddTracking([FromBody] AddTrackingDto dto)
+        public async Task<IActionResult> AddTracking([FromBody] AddTrackingDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var company = await _ctx.Companies
+                .Include(c => c.ApiKeys)
+                .FirstOrDefaultAsync(c => c.Id == dto.IdCompany);
 
-            var company = ctx.Companies.Find(dto.IdCompany);
-            if (company == null)
-                return NotFound("Company not found");
+            if (company == null) return NotFound("Company not found");
 
-            var TTN = dto.TTN;
+            var np = await LoadFromNovaPoshta(dto.TTN, company.ApiKeys.NovaPoshta);
+            if (np == null) return BadRequest("Tracking not found");
 
-            var url = "https://api.novaposhta.ua/v2.0/json/";
-
-            var json = $@"{{
-        ""apiKey"": ""{company.ApiKeys.NovaPoshta}"",
-        ""modelName"": ""TrackingDocumentGeneral"",
-        ""calledMethod"": ""getStatusDocuments"",
-        ""methodProperties"": {{
-            ""Documents"": [
-                {{ ""DocumentNumber"": ""{TTN}"" }}
-            ]
-        }}
-    }}";
-
-            using var client = new HttpClient();
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = client.PostAsync(url, content).Result;
-            var resultJson = response.Content.ReadAsStringAsync().Result;
-
-            var npResponse = JsonSerializer.Deserialize<NovaPoshtaResponse>(
-                resultJson,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-            if (npResponse == null || !npResponse.success || npResponse.data.Count == 0)
-                return BadRequest("Tracking not found");
-
-            var np = npResponse.data.First();
-
-            
-
-            // 🔥 ГОЛОВНЕ — збереження
             var tracking = new Tracking
             {
                 Number = np.Number,
-                StatusCode = np.StatusCode,
-                DateCreated = np.DateCreated,
                 Status = np.Status,
-                RefEW = np.RefEW,
-
-                RecipientDateTime = np.RecipientDateTime,
-
-                CargoType = np.CargoType,
-                CargoDescriptionString = np.CargoDescriptionString,
-
-                DocumentCost = np.DocumentCost,
-                AnnouncedPrice = np.AnnouncedPrice,
-
-                DocumentWeight = np.DocumentWeight,
-                CheckWeight = np.CheckWeight,
-                CalculatedWeight = np.CalculatedWeight,
-                CheckWeightMethod = np.CheckWeightMethod,
-                FactualWeight = np.FactualWeight,
-                VolumeWeight = np.VolumeWeight,
-
-                SeatsAmount = np.SeatsAmount,
-                ServiceType = np.ServiceType,
-
-                CitySender = np.CitySender,
-                CounterpartySenderDescription = np.CounterpartySenderDescription,
-                CounterpartySenderType = np.CounterpartySenderType,
-                PhoneSender = np.PhoneSender,
-                SenderAddress = np.SenderAddress,
-                SenderFullNameEW = np.SenderFullNameEW,
-                WarehouseSender = np.WarehouseSender,
-
-                CityRecipient = np.CityRecipient,
-                CounterpartyRecipientDescription = np.CounterpartyRecipientDescription,
-                PhoneRecipient = np.PhoneRecipient,
-                RecipientAddress = np.RecipientAddress,
+                DeliveryDate = np.RecipientDateTime,
                 RecipientFullName = np.RecipientFullName,
-                WarehouseRecipient = np.WarehouseRecipient,
-                WarehouseRecipientNumber = np.WarehouseRecipientNumber,
-
-                PayerType = np.PayerType,
-                PaymentMethod = np.PaymentMethod,
-                ExpressWaybillPaymentStatus = np.ExpressWaybillPaymentStatus,
-                ExpressWaybillAmountToPay = np.ExpressWaybillAmountToPay,
-
-                ScheduledDeliveryDate = np.ScheduledDeliveryDate,
-                ActualDeliveryDate = np.ActualDeliveryDate,
-                DateScan = np.DateScan,
-                TrackingUpdateDate = np.TrackingUpdateDate,
-
-                CargoReturnRefusal = np.CargoReturnRefusal,
-                SecurePayment = np.SecurePayment,
-
-                PossibilityCreateClaim = np.PossibilityCreateClaim,
-                PossibilityCreateReturn = np.PossibilityCreateReturn
+                DaysType = "calendar",
+                DaysCount = 0,
+                CompanyId = dto.IdCompany
             };
 
-            company.CompanyTrackings.Add(tracking);
-            ctx.SaveChanges();
+            _ctx.Trackings.Add(tracking);
+            await _ctx.SaveChangesAsync();
 
             return Ok(tracking);
         }
-        private async Task<Tracking?> LoadFromNovaPoshta(string ttn, string apiKey)
+
+        // ================= BULK UPDATE PAYMENT INFO =================
+        [HttpPut("payment/bulk")]
+        public async Task<IActionResult> BulkUpdatePaymentInfo([FromBody] List<UpdatePaymentDto> updates)
         {
-            var url = "https://api.novaposhta.ua/v2.0/json/";
+            if (updates == null || updates.Count == 0) return BadRequest("No updates provided");
 
+            var ids = updates.Select(u => u.Id).ToList();
+            var trackingsToUpdate = await _ctx.Trackings.Where(t => ids.Contains(t.Id)).ToListAsync();
+
+            foreach (var tracking in trackingsToUpdate)
+            {
+                var dto = updates.First(u => u.Id == tracking.Id);
+                tracking.DaysType = dto.DaysType;
+                tracking.DaysCount = dto.DaysCount;
+                tracking.PaymentDueDate = dto.PaymentDueDate;
+                tracking.OverdueDays = dto.OverdueDays;
+
+                // Нові поля
+                tracking.Amount = dto.Amount;
+                tracking.InvoiceNumber = dto.InvoiceNumber;
+                tracking.Payer = dto.Payer;
+                tracking.Vehicle = dto.Vehicle;
+                tracking.Route = dto.Route;
+                tracking.PaymentMark = dto.PaymentMark;
+            }
+
+            await _ctx.SaveChangesAsync();
+            return Ok(new { message = "Payment info updated successfully", count = trackingsToUpdate.Count });
+        }
+
+        // ================= DELETE TRACKING =================
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTracking(int id)
+        {
+            var tracking = await _ctx.Trackings.FindAsync(id);
+            if (tracking == null) return NotFound("Tracking not found");
+
+            _ctx.Trackings.Remove(tracking);
+            await _ctx.SaveChangesAsync();
+
+            return Ok(new { message = "Tracking deleted successfully", id });
+        }
+
+        // ================= REFRESH NP DATA =================
+        [HttpPut("refresh-np/{companyId}")]
+        public async Task<IActionResult> RefreshNPData(int companyId)
+        {
+            var company = await _ctx.Companies
+                .Include(c => c.ApiKeys)
+                .FirstOrDefaultAsync(c => c.Id == companyId);
+
+            if (company == null) return NotFound("Company not found");
+
+            var trackings = await _ctx.Trackings
+                .Where(t => t.CompanyId == companyId)
+                .ToListAsync();
+
+            foreach (var t in trackings)
+            {
+                var np = await LoadFromNovaPoshta(t.Number, company.ApiKeys.NovaPoshta);
+                if (np != null)
+                {
+                    t.Status = np.Status;
+                    t.DeliveryDate = np.RecipientDateTime;
+                    t.RecipientFullName = np.RecipientFullName;
+                }
+            }
+
+            await _ctx.SaveChangesAsync();
+            return Ok(new { message = "NP data refreshed", count = trackings.Count });
+        }
+
+        // ================= LOAD FROM NP =================
+        private async Task<NovaPoshtaTrackingDto?> LoadFromNovaPoshta(string ttn, string apiKey)
+        {
             var json = $@"{{
-        ""apiKey"": ""{apiKey}"",
-        ""modelName"": ""TrackingDocumentGeneral"",
-        ""calledMethod"": ""getStatusDocuments"",
-        ""methodProperties"": {{
-            ""Documents"": [
-                {{ ""DocumentNumber"": ""{ttn}"" }}
-            ]
-        }}
-    }}";
+                ""apiKey"": ""{apiKey}"",
+                ""modelName"": ""TrackingDocumentGeneral"",
+                ""calledMethod"": ""getStatusDocuments"",
+                ""methodProperties"": {{
+                    ""Documents"": [
+                        {{ ""DocumentNumber"": ""{ttn}"" }}
+                    ]
+                }}
+            }}";
 
-            using var client = new HttpClient();
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(url, content);
-            var resultJson = await response.Content.ReadAsStringAsync();
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsync(
+                "https://api.novaposhta.ua/v2.0/json/",
+                new StringContent(json, Encoding.UTF8, "application/json")
+            );
 
-            var npResponse = JsonSerializer.Deserialize<NovaPoshtaResponse>(
-                resultJson,
+            var result = await response.Content.ReadAsStringAsync();
+            var np = JsonSerializer.Deserialize<NovaPoshtaResponse>(
+                result,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
             );
 
-            if (npResponse == null || !npResponse.success || npResponse.data.Count == 0)
-                return null;
-
-            return npResponse.data.First();
+            if (np == null || !np.success || np.data.Count == 0) return null;
+            return np.data.First();
         }
-        // edit
-        [HttpPut("{id}")]
-        public IActionResult EditTracking(int id, [FromBody] Tracking tracking)
-        {
-            if (id != tracking.Id)
-            {
-                return BadRequest();
-            }
-
-            ctx.Entry(tracking).State = EntityState.Modified;
-            ctx.SaveChanges();
-
-            return NoContent();
-        }
-
     }
 
+    // ================= DTOs =================
+    public class NovaPoshtaTrackingDto
+    {
+        public string Number { get; set; } = null!;
+        public string Status { get; set; } = null!;
+        public string? ActualDeliveryDate { get; set; }
+        public string? RecipientDateTime { get; set; }
+        public string? RecipientFullName { get; set; }
+    }
 
     public class NovaPoshtaResponse
     {
         public bool success { get; set; }
-        public List<Tracking> data { get; set; }
+        public List<NovaPoshtaTrackingDto> data { get; set; } = new();
     }
+
     public class AddTrackingDto
     {
         public string TTN { get; set; } = null!;
         public int IdCompany { get; set; }
+    }
+
+    public class UpdatePaymentDto
+    {
+        public int Id { get; set; }
+        public string DaysType { get; set; } = "calendar";
+        public int DaysCount { get; set; }
+        public DateTime? PaymentDueDate { get; set; }
+        public int? OverdueDays { get; set; }
+
+        public decimal? Amount { get; set; }
+        public string? InvoiceNumber { get; set; }
+        public string? Payer { get; set; }
+        public string? Vehicle { get; set; }
+        public string? Route { get; set; }
+        public bool PaymentMark { get; set; }
     }
 }

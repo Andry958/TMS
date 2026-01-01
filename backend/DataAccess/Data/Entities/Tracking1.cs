@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Data.Entities
 {
-    public class Tracking : BaseEntity
+    public class Tracking1 : BaseEntity
     {
         public int Id { get; set; }
 
