@@ -4,6 +4,7 @@ using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(TMSDbContext))]
-    partial class TMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260103104443_FixPeapleCompanyFK")]
+    partial class FixPeapleCompanyFK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,8 +142,7 @@ namespace DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("Amount")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
@@ -460,8 +462,8 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Data.Entities.Company", b =>
                 {
-                    b.HasOne("DataAccess.Data.Entities.Company", "ParentCompany")
-                        .WithMany("ChildCompanies")
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany("Clients")
                         .HasForeignKey("ParentCompanyId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -552,7 +554,7 @@ namespace DataAccess.Migrations
                                 .HasForeignKey("CompanyId");
                         });
 
-                    b.OwnsOne("DataAccess.Data.Entities.Address", "UkrPoshtaAddress", b1 =>
+                    b.OwnsOne("DataAccess.Data.Entities.Address", "PostalAddress", b1 =>
                         {
                             b1.Property<int>("CompanyId")
                                 .HasColumnType("int");
@@ -608,105 +610,6 @@ namespace DataAccess.Migrations
                                 .HasForeignKey("CompanyId");
                         });
 
-                    b.OwnsOne("DataAccess.Data.Entities.NovaPoshtaDelivery", "NovaPoshtaDelivery", b1 =>
-                        {
-                            b1.Property<int>("CompanyId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("AddressComment")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Apartment")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Branch")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Building")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("City")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("DeliveryType")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("DigitalAddressReference")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("Id")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("PostomatNumber")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Street")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("CompanyId");
-
-                            b1.ToTable("Companies");
-
-                            b1.WithOwner("Company")
-                                .HasForeignKey("CompanyId");
-
-                            b1.Navigation("Company");
-                        });
-
-                    b.OwnsOne("DataAccess.Data.Entities.NovaPoshtaRecipient", "NovaPoshtaRecipient", b1 =>
-                        {
-                            b1.Property<int>("CompanyId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("CompanyName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("EdrpouCode")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("FirstName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("Id")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("LastName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("MiddleName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OrgFirstName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OrgLastName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OrgMiddleName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OrgPhone")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OwnershipForm")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Phone")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("RecipientType")
-                                .HasColumnType("int");
-
-                            b1.HasKey("CompanyId");
-
-                            b1.ToTable("Companies");
-
-                            b1.WithOwner("Company")
-                                .HasForeignKey("CompanyId");
-
-                            b1.Navigation("Company");
-                        });
-
                     b.Navigation("ActualAddress")
                         .IsRequired();
 
@@ -719,13 +622,7 @@ namespace DataAccess.Migrations
                     b.Navigation("LegalAddress")
                         .IsRequired();
 
-                    b.Navigation("NovaPoshtaDelivery");
-
-                    b.Navigation("NovaPoshtaRecipient");
-
-                    b.Navigation("ParentCompany");
-
-                    b.Navigation("UkrPoshtaAddress")
+                    b.Navigation("PostalAddress")
                         .IsRequired();
                 });
 
@@ -815,7 +712,7 @@ namespace DataAccess.Migrations
                 {
                     b.Navigation("BankDetails");
 
-                    b.Navigation("ChildCompanies");
+                    b.Navigation("Clients");
 
                     b.Navigation("CompanyTrackings");
 

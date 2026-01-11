@@ -1,115 +1,53 @@
-import { useEffect, useState } from "react";
-import { addBusinessDays, addDays, differenceInCalendarDays, parse } from "date-fns";
+import { useEffect, useState, useMemo } from "react";
+import TrackingFilters from "../components/novaposhta/TrackingFilters";
+import TrackingPagination from "../components/novaposhta/TrackingPagination";
+import TrackingTableRow from "../components/novaposhta/TrackingTableRow";
+import AddTrackingForm from "../components/novaposhta/AddTrackingForm";
+import { calculateDueDate, differenceInCalendarDays } from "../utils/dateUtils";
+import { useToast } from "../context/ToastContext";
+import { useApi } from "../context/ApiContext";
 
-const API_BASE_URL = "https://localhost:7060";
-
-// Фірмові кольори Nova Poshta
 const NP_BLUE = "#0066CC";
 const NP_BLUE_DARK = "#0055AA";
-const NP_BLUE_LIGHT = "#E6F0FF";
 
-// Форматування дати для таблиці
-// Форматування для таблиці
-const formatDate = (value) => {
-  if (!value) return "—";
-
-  let date;
-  if (value instanceof Date) {
-    date = value;
-  } else {
-    const parts = value.match(/(\d{2})\.(\d{2})\.(\d{4})/);
-    if (parts) {
-      const [, day, month, year] = parts;
-      date = new Date(year, month - 1, day);
-    } else {
-      date = new Date(value);
-      if (isNaN(date)) return "—";
-    }
-  }
-
-  return date.toLocaleDateString("uk-UA", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-};
-
-// Обчислення крайнього терміну
-const calculateDueDate = (startDate, daysType, daysCount) => {
-  if (!startDate || daysCount <= 0) return null;
-
-  // Парсимо startDate
-  let baseDate;
-  if (startDate instanceof Date) {
-    baseDate = new Date(startDate);
-  } else {
-    // Спроба DD.MM.YYYY HH:mm(:ss)
-    const parts = startDate.match(/(\d{2})\.(\d{2})\.(\d{4})[, ] (\d{2}):(\d{2}):?(\d{0,2})?/);
-    if (parts) {
-      const [, day, month, year, hour, minute, second] = parts;
-      baseDate = new Date(year, month - 1, day, hour, minute, second || 0);
-    } else {
-      baseDate = new Date(startDate);
-    }
-  }
-
-  if (isNaN(baseDate)) return null;
-
-  const result =
-    daysType === "business"
-      ? addBusinessDays(baseDate, daysCount)
-      : addDays(baseDate, daysCount);
-
-  // Ставимо кінець дня
-  result.setHours(23, 59, 59, 999);
-
-  return result.toISOString(); // ISO для БД
-};
-
-
-
-
-// Парсинг дати НП з формату "dd.MM.yyyy HH:mm:ss"
-const parseDeliveryDate = (str) => {
-  if (!str) return null;
-  const parsed = parse(str, "dd.MM.yyyy HH:mm:ss", new Date());
-  return isNaN(parsed) ? null : parsed;
-};
-
-export default function NovaPoshtaTrackingWithPayment({ companyId }) {
+function NovaPoshtaTrackingWithPayment({ companyId = 1 }) {
+  const { apiData } = useApi();
+  const API_BASE_URL = apiData;
   const [trackings, setTrackings] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [newTTN, setNewTTN] = useState("");
-  const [changes, setChanges] = useState({});
+  const [editingRows, setEditingRows] = useState({});
 
-  // Пагінація
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 15;
+  const { pushToast } = useToast();
 
-  const loadTrackings = async (page = currentPage) => {
+  // Фільтри
+  const [filterStatus, setFilterStatus] = useState("");
+  const [sortField, setSortField] = useState("id");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [searchTTN, setSearchTTN] = useState("");
+  const [filterOverdue, setFilterOverdue] = useState("");
+  const [filterPaid, setFilterPaid] = useState("");
+
+  // ====================== LOAD TRACKINGS ======================
+  const loadTrackings = async (page = 1) => {
     if (!companyId) return;
     setLoading(true);
+
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/Tracking/company/${companyId}?page=${page}&pageSize=${itemsPerPage}&sortOrder=desc`
-      );
+      const url = `${API_BASE_URL}/Tracking/company/${companyId}?page=${page}&pageSize=${itemsPerPage}&sortOrder=${sortOrder}`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
 
-      const items = Array.isArray(data)
-        ? data
-        : data.Items || data.items || [];
+      const items = Array.isArray(data) ? data : data.Items || data.items || [];
 
       setTrackings(items);
       setCurrentPage(data.currentPage || data.CurrentPage || page);
-      setTotalPages(
-        data.totalPages ||
-        data.TotalPages ||
-        Math.ceil(items.length / itemsPerPage) ||
-        1
-      );
+      setTotalPages(data.totalPages || data.TotalPages || 1);
+      setTotalItems(data.totalItems || data.TotalItems || items.length);
     } catch (error) {
       console.error("Помилка завантаження:", error);
       setTrackings([]);
@@ -118,90 +56,140 @@ export default function NovaPoshtaTrackingWithPayment({ companyId }) {
     }
   };
 
+  // Фільтрація на клієнті (для розширеної фільтрації)
+  const filteredTrackings = useMemo(() => {
+    let result = [...trackings];
+
+    // Фільтр по статусу
+    if (filterStatus) {
+      result = result.filter((t) => t.status?.includes(filterStatus));
+    }
+
+    // Пошук по ТТН
+    if (searchTTN) {
+      result = result.filter((t) =>
+        (t.number || t.TTN || "").toLowerCase().includes(searchTTN.toLowerCase())
+      );
+    }
+
+    // Фільтр протермінування
+    if (filterOverdue === "overdue") {
+      result = result.filter((t) => t.overdueDays > 0);
+    } else if (filterOverdue === "notOverdue") {
+      result = result.filter((t) => !t.overdueDays || t.overdueDays === 0);
+    }
+
+    // Фільтр оплати
+    if (filterPaid === "paid") {
+      result = result.filter((t) => t.paymentMark === true);
+    } else if (filterPaid === "unpaid") {
+      result = result.filter((t) => !t.paymentMark);
+    }
+
+    const sorted = [...result].sort((a, b) => {
+      const dir = sortOrder === "asc" ? 1 : -1;
+
+      const getDate = (val) => {
+        const d = new Date(val);
+        return Number.isNaN(d.getTime()) ? null : d.getTime();
+      };
+
+      switch (sortField) {
+        case "paymentDueDate": {
+          const av = getDate(a.paymentDueDate) ?? 0;
+          const bv = getDate(b.paymentDueDate) ?? 0;
+          return (av - bv) * dir;
+        }
+        case "overdueDays": {
+          const av = Number(a.overdueDays) || 0;
+          const bv = Number(b.overdueDays) || 0;
+          return (av - bv) * dir;
+        }
+        case "payer": {
+          const av = (a.payer || "").toLowerCase();
+          const bv = (b.payer || "").toLowerCase();
+          return av.localeCompare(bv) * dir;
+        }
+        case "amount": {
+          const av = Number(a.amount) || 0;
+          const bv = Number(b.amount) || 0;
+          return (av - bv) * dir;
+        }
+        case "id":
+        default: {
+          const av = Number(a.id) || 0;
+          const bv = Number(b.id) || 0;
+          return (av - bv) * dir;
+        }
+      }
+    });
+
+    return sorted;
+  }, [trackings, filterStatus, searchTTN, filterOverdue, filterPaid, sortField, sortOrder]);
+
+  useEffect(() => {
+    loadTrackings(1);
+  }, [companyId, sortOrder]);
+
+  // ====================== REFRESH NP DATA ======================
   const refreshNPData = async () => {
     if (!companyId) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/Tracking/refresh-np/${companyId}`, {
+      const res = await fetch(`${API_BASE_URL}/Tracking/refresh-np/${companyId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
       });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
       await loadTrackings(currentPage);
-      alert(
-        `✅ Оновлено дані з Нової Пошти для ${data.count || data.countUpdated || 0} відправлень`
-      );
+      pushToast(`Оновлено дані з Нової Пошти для ${data.count || 0} відправлень`, "success");
     } catch (error) {
       console.error("Помилка оновлення НП:", error);
-      alert("Не вдалося оновити дані з Нової Пошти: " + error.message);
+      pushToast("Не вдалося оновити дані з Нової Пошти: " + error.message, "error");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadTrackings();
-  }, [companyId]);
-
-  const addTracking = async (e) => {
-    e.preventDefault();
-    if (!newTTN.trim()) return;
+  // ====================== ADD TRACKING ======================
+  const addTracking = async (ttn) => {
+    if (!ttn) return;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/Tracking`, {
+      const res = await fetch(`${API_BASE_URL}/Tracking`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ TTN: newTTN.trim(), IdCompany: companyId }),
+        body: JSON.stringify({ TTN: ttn, IdCompany: companyId }),
       });
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      setNewTTN("");
+      pushToast("ТТН успішно додано!", "success");
       loadTrackings(1);
     } catch (error) {
-      alert("Помилка додавання ТТН: " + error.message);
+      pushToast("Помилка додавання ТТН: " + error.message, "error");
     }
   };
 
-  const parseDeliveryDate = (value) => {
-    if (!value) return null;
+  // ====================== DELETE TRACKING ======================
+  const deleteTracking = async (tracking) => {
+    if (!window.confirm(`Видалити ТТН ${tracking.number || tracking.TTN}?`)) return;
 
-    // Очікуємо формат "DD.MM.YYYY HH:mm"
-    const parts = value.match(/(\d{2})\.(\d{2})\.(\d{4}) (\d{2}):(\d{2})/);
-    if (!parts) return null;
-
-    const [, day, month, year, hour, minute] = parts;
-    return new Date(year, Number(month) - 1, day, hour, minute);
+    try {
+      const res = await fetch(`${API_BASE_URL}/Tracking/${tracking.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Помилка видалення");
+      pushToast("ТТН видалено", "success");
+      loadTrackings(currentPage);
+    } catch (err) {
+      pushToast("Помилка видалення: " + err.message, "error");
+    }
   };
 
-
-// Обчислення крайнього терміну без годин
-const calculateDueDate = (startDate, daysType, daysCount) => {
-  if (!startDate || daysCount <= 0) return null;
-
-  let baseDate;
-  const parts = startDate.match(/(\d{2})\.(\d{2})\.(\d{4})/);
-  if (parts) {
-    const [, day, month, year] = parts;
-    baseDate = new Date(year, month - 1, day);
-  } else {
-    baseDate = new Date(startDate);
-  }
-
-  if (isNaN(baseDate)) return null;
-
-  let result =
-    daysType === "business"
-      ? addBusinessDays(baseDate, daysCount)
-      : addDays(baseDate, daysCount);
-
-  // Ставимо початок дня (00:00)
-  result.setHours(0, 0, 0, 0);
-
-  return result.toISOString().split("T")[0]; // Тільки дата YYYY-MM-DD для БД
-};
-
-
-
+  // ====================== EDITING ROWS ======================
+  const toggleEdit = (id) => {
+    setEditingRows((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const updateTracking = (id, key, value) => {
     setTrackings((prev) =>
@@ -212,11 +200,9 @@ const calculateDueDate = (startDate, daysType, daysCount) => {
 
         if (key === "daysType" || key === "daysCount") {
           const daysType = key === "daysType" ? value : updated.daysType ?? "calendar";
-          const daysCount =
-            key === "daysCount" ? Number(value) || 0 : Number(updated.daysCount) || 0;
-          console.log(t)
-          const deliveryDate = t.deliveryDate;
+          const daysCount = key === "daysCount" ? Number(value) || 0 : Number(updated.daysCount) || 0;
 
+          const deliveryDate = t.deliveryDate;
           if (deliveryDate && daysCount > 0) {
             const dueDate = calculateDueDate(deliveryDate, daysType, daysCount);
             updated.paymentDueDate = dueDate;
@@ -224,11 +210,7 @@ const calculateDueDate = (startDate, daysType, daysCount) => {
             if (dueDate) {
               const today = new Date();
               today.setHours(0, 0, 0, 0);
-
-              const due = new Date(dueDate);
-              due.setHours(0, 0, 0, 0);
-
-              const diff = differenceInCalendarDays(today, due);
+              const diff = differenceInCalendarDays(today, dueDate);
               updated.overdueDays = diff > 0 ? diff : 0;
             } else {
               updated.overdueDays = null;
@@ -242,85 +224,54 @@ const calculateDueDate = (startDate, daysType, daysCount) => {
         return updated;
       })
     );
-
-    setChanges((prev) => ({ ...prev, [id]: true }));
-  };
-  const formatForDB = (date) => {
-    if (!date) return null;
-    const d = date instanceof Date ? date : new Date(date);
-    const pad = (n) => (n < 10 ? "0" + n : n);
-    return (
-      d.getFullYear() +
-      "-" +
-      pad(d.getMonth() + 1) +
-      "-" +
-      pad(d.getDate()) +
-      " " +
-      pad(d.getHours()) +
-      ":" +
-      pad(d.getMinutes()) +
-      ":" +
-      pad(d.getSeconds())
-    );
   };
 
-  const saveAllChanges = async () => {
-    const changed = trackings.filter((t) => changes[t.id]);
-    if (!changed.length) {
-      alert("Немає змін для збереження");
-      return;
-    }
-
-    setSaving(true);
+  // ====================== SAVE CHANGES ======================
+  const saveChanges = async (tracking) => {
     try {
-      const updates = changed.map((t) => ({
-        id: t.id,
-        daysType: t.daysType || "calendar",
-        daysCount: t.daysCount || 0,
-        paymentDueDate: t.paymentDueDate ? new Date(t.paymentDueDate).toISOString() : null, // правильний ISO
-        overdueDays: t.overdueDays,
-        amount: t.amount || null,
-        invoiceNumber: t.invoiceNumber || "",
-        payer: t.payer || "",
-        vehicle: t.vehicle || "",
-        route: t.route || "",
-        paymentMark: !!t.paymentMark,
-      }));
+      const update = {
+        id: tracking.id,
+        daysType: tracking.daysType || "calendar",
+        daysCount: tracking.daysCount || 0,
+        paymentDueDate: tracking.paymentDueDate ? new Date(tracking.paymentDueDate).toISOString() : null,
+        overdueDays: tracking.overdueDays,
+        amount: tracking.amount || null,
+        invoiceNumber: tracking.invoiceNumber || "",
+        payer: tracking.payer || "",
+        vehicle: tracking.vehicle || "",
+        route: tracking.route || "",
+        paymentMark: !!tracking.paymentMark,
+      };
 
-
-
-
-      const res = await fetch(`${API_BASE_URL}/api/Tracking/payment/bulk`, {
+      const res = await fetch(`${API_BASE_URL}/Tracking/payment/bulk`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
+        body: JSON.stringify([update]),
       });
 
       if (!res.ok) throw new Error(await res.text());
 
-      alert(`✅ Збережено ${updates.length} записів`);
-      setChanges({});
+      pushToast(`Збережено запис ID: ${tracking.id}`, "success");
+      setEditingRows((prev) => ({ ...prev, [tracking.id]: false }));
       loadTrackings(currentPage);
     } catch (error) {
-      alert("Помилка збереження: " + error.message);
-    } finally {
-      setSaving(false);
+      pushToast("Помилка збереження: " + error.message, "error");
     }
   };
 
-  const hasChanges = Object.keys(changes).length > 0;
-
+  // ====================== JSX ======================
   return (
     <div className="container-fluid py-4" style={{ backgroundColor: "#f8f9fa" }}>
-      {/* Шапка */}
+      {/* Заголовок */}
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
         <div>
           <h3 style={{ color: NP_BLUE_DARK, fontWeight: 700 }}>
             🚚 Контроль ТТН та оплат
           </h3>
-          <small className="text-muted">Nova Poshta • Терміни оплати</small>
+          <small className="text-muted">
+            Nova Poshta • Терміни оплати • Всього записів: {totalItems}
+          </small>
         </div>
-
         <div className="d-flex gap-2">
           <button
             className="btn btn-outline-primary"
@@ -337,62 +288,29 @@ const calculateDueDate = (startDate, daysType, daysCount) => {
               "🔄 Оновити дані НП"
             )}
           </button>
-
-          <button
-            className="btn"
-            style={{ backgroundColor: NP_BLUE, borderColor: NP_BLUE, color: "white" }}
-            onClick={saveAllChanges}
-            disabled={saving || !hasChanges}
-          >
-            {saving ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" />
-                Збереження...
-              </>
-            ) : (
-              `💾 Зберегти ${hasChanges ? `(${Object.keys(changes).length})` : ""}`
-            )}
-          </button>
         </div>
       </div>
+
+      {/* Фільтри */}
+      <TrackingFilters
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
+        sortField={sortField}
+        setSortField={setSortField}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        searchTTN={searchTTN}
+        setSearchTTN={setSearchTTN}
+        filterOverdue={filterOverdue}
+        setFilterOverdue={setFilterOverdue}
+        filterPaid={filterPaid}
+        setFilterPaid={setFilterPaid}
+      />
 
       {/* Форма додавання */}
-      <div className="card border-0 shadow mb-4">
-        <div className="card-body">
-          <h5 style={{ color: NP_BLUE_DARK }}>Додати нове відправлення</h5>
-          <form onSubmit={addTracking} className="row g-3">
-            <div className="col-md-9">
-              <input
-                type="text"
-                className="form-control form-control-lg"
-                placeholder="Номер ТТН (наприклад: 2040000012345678)"
-                value={newTTN}
-                onChange={(e) => setNewTTN(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-3">
-              <button
-                type="submit"
-                className="btn btn-primary w-100 btn-lg"
-                style={{ backgroundColor: NP_BLUE, borderColor: NP_BLUE }}
-                disabled={loading}
-              >
-                ➕ Додати
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+      <AddTrackingForm onAdd={addTracking} loading={loading} />
 
-      {hasChanges && (
-        <div className="alert alert-warning mb-4 d-flex align-items-center gap-2">
-          <strong>⚠️</strong>
-          <span>Є незбережені зміни ({Object.keys(changes).length})</span>
-        </div>
-      )}
-
-      {/* Таблиця */}
+      {/* Таблиця ТТН */}
       <div className="card border-0 shadow">
         <div className="card-body p-0">
           <div className="table-responsive">
@@ -403,6 +321,7 @@ const calculateDueDate = (startDate, daysType, daysCount) => {
                   <th>ТТН</th>
                   <th>Статус</th>
                   <th>Дата отримання</th>
+                  <th>Компанія отримувача</th>
                   <th>Отримувач</th>
                   <th>Тип днів</th>
                   <th>Кількість</th>
@@ -414,146 +333,50 @@ const calculateDueDate = (startDate, daysType, daysCount) => {
                   <th>ТЗ</th>
                   <th>Маршрут</th>
                   <th className="text-center">Оплата</th>
-                  <th></th>
+                  <th>Дії</th>
                 </tr>
               </thead>
               <tbody>
-                {loading && !trackings.length ? (
+                {loading && !filteredTrackings.length ? (
                   <tr>
-                    <td colSpan={16} className="text-center py-5">
+                    <td colSpan={17} className="text-center py-5">
                       <div className="spinner-border text-primary" />
                       <p className="mt-2">Завантаження...</p>
                     </td>
                   </tr>
-                ) : trackings.length === 0 ? (
+                ) : filteredTrackings.length === 0 ? (
                   <tr>
-                    <td colSpan={16} className="text-center py-5 text-muted">
-                      📦 Немає відправлень
+                    <td colSpan={17} className="text-center py-5 text-muted">
+                      📦 Немає відправлень за вибраними фільтрами
                     </td>
                   </tr>
                 ) : (
-                  trackings.map((t) => {
-                    const isChanged = changes[t.id];
-                    return (
-                      <tr key={t.id} className={isChanged ? "table-warning" : ""}>
-                        <td className="ps-3">
-                          <span className="badge bg-secondary">{t.id}</span>
-                        </td>
-                        <td className="font-monospace fw-bold">{t.number || t.TTN}</td>
-                        <td>
-                          <span
-                            className={`badge ${t.status?.includes("Доставлено")
-                              ? "bg-success"
-                              : t.status?.includes("В дорозі")
-                                ? "bg-warning"
-                                : "bg-secondary"
-                              }`}
-                          >
-                            {t.status || "—"}
-                          </span>
-                        </td>
-                        <td>{formatDate(parseDeliveryDate(t.deliveryDate))}</td>
-                        <td>{t.recipientFullName || "—"}</td>
-                        <td>
-                          <select
-                            className="form-select form-select-sm"
-                            value={t.daysType || "calendar"}
-                            onChange={(e) => updateTracking(t.id, "daysType", e.target.value)}
-                          >
-                            <option value="calendar">Календарні</option>
-                            <option value="business">Робочі(Банківські)</option>
-                          </select>
-                        </td>
-                        <td>
-                          <input
-                            type="number"
-                            className="form-control form-control-sm"
-                            style={{ width: "80px" }}
-                            value={t.daysCount ?? 10}
-                            onChange={(e) => updateTracking(t.id, "daysCount", e.target.value)}
-                            min="1"
-                          />
-                        </td>
-                        <td>{t.paymentDueDate ? formatDate(t.paymentDueDate) : "—"}</td>
-                        <td>
-                          {t.overdueDays ? <span className="badge bg-danger">{t.overdueDays} дн</span> : "—"}
-                        </td>
-                        <td>
-                          <input
-                            type="number"
-                            className="form-control form-control-sm"
-                            value={t.amount ?? ""}
-                            onChange={(e) => updateTracking(t.id, "amount", e.target.value)}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            className="form-control form-control-sm"
-                            value={t.invoiceNumber ?? ""}
-                            onChange={(e) => updateTracking(t.id, "invoiceNumber", e.target.value)}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            className="form-control form-control-sm"
-                            value={t.payer ?? ""}
-                            onChange={(e) => updateTracking(t.id, "payer", e.target.value)}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            className="form-control form-control-sm"
-                            value={t.vehicle ?? ""}
-                            onChange={(e) => updateTracking(t.id, "vehicle", e.target.value)}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            className="form-control form-control-sm"
-                            value={t.route ?? ""}
-                            onChange={(e) => updateTracking(t.id, "route", e.target.value)}
-                          />
-                        </td>
-                        <td className="text-center">
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            checked={!!t.paymentMark}
-                            onChange={(e) => updateTracking(t.id, "paymentMark", e.target.checked)}
-                          />
-                        </td>
-                        <td>
-                          <button
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={async () => {
-                              if (!window.confirm(`Видалити ТТН ${t.number || t.TTN}?`)) return;
-                              try {
-                                const res = await fetch(`${API_BASE_URL}/api/Tracking/${t.id}`, {
-                                  method: "DELETE",
-                                });
-                                if (!res.ok) throw new Error("Помилка видалення");
-                                loadTrackings(currentPage);
-                              } catch (err) {
-                                alert("Помилка видалення: " + err.message);
-                              }
-                            }}
-                          >
-                            🗑
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
+                  filteredTrackings.map((t) => (
+                    <TrackingTableRow
+                      key={t.id}
+                      tracking={t}
+                      isEditing={editingRows[t.id] || false}
+                      onToggleEdit={toggleEdit}
+                      onUpdate={updateTracking}
+                      onSave={saveChanges}
+                      onDelete={deleteTracking}
+                    />
+                  ))
                 )}
               </tbody>
             </table>
           </div>
         </div>
       </div>
+
+      {/* Пагінація */}
+      <TrackingPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={loadTrackings}
+      />
     </div>
   );
 }
+
+export default NovaPoshtaTrackingWithPayment;

@@ -1,0 +1,181 @@
+# ============================================
+# .NET / Visual Studio
+# ============================================
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Entity Framework
+*.mdf
+*.ldf
+*.ndf
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# ============================================
+# Node.js / React / Frontend
+# ============================================
+
+# Dependencies
+node_modules/
+jspm_packages/
+
+# Production build
+dist/
+dist-ssr/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage/
+*.lcov
+.nyc_output
+
+# Temporary files
+*.local
+*.cache
+.parcel-cache/
+.next/
+.nuxt/
+out/
+
+# ============================================
+# IDEs and Editors
+# ============================================
+
+# Visual Studio Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*~
+
+# ============================================
+# Operating System
+# ============================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Linux
+*~
+.directory
+
+# ============================================
+# Project Specific
+# ============================================
+
+# Certificates
+*.pfx
+*.p12
+certs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# API Keys (якщо зберігаються локально)
+appsettings.Development.json
+# appsettings.json # Розкоментуйте, якщо не хочете комітити
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+
+# Migration scripts (optional - закоментуйте, якщо потрібні)
+# **/Migrations/
+
+# Temp files
+tmp/
+temp/
+*.tmp
+*.temp

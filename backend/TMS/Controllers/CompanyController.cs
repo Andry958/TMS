@@ -4,6 +4,7 @@ using DataAccess.Data.Entities;
 using DataAccess.Data.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace TMS.Controllers
 {
@@ -20,19 +21,149 @@ namespace TMS.Controllers
         [HttpGet]
         public IActionResult GetCompanies()
         {
-            var companies = ctx.Companies.ToList();
+            var companies = ctx.Companies
+                .Include(c => c.Contact)
+                .Include(c => c.LegalAddress)
+                .Include(c => c.UkrPoshtaAddress)
+                .Include(c => c.ActualAddress)
+                .Include(c => c.ManagementPeaple)
+                .Include(c => c.BankDetails)
+                    .ThenInclude(bd => bd.CorrespondentBanks)
+                .Include(c => c.ApiKeys)
+                .Include(c => c.NovaPoshtaRecipient)
+                .Include(c => c.NovaPoshtaDelivery)
+                .Select(c => MapToDto(c))
+                .ToList();
             return Ok(companies);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetCompanyById(int id)
         {
-            var company = ctx.Companies.Find(id);
+            var company = ctx.Companies
+                .Include(c => c.Contact)
+                .Include(c => c.LegalAddress)
+                .Include(c => c.UkrPoshtaAddress)
+                .Include(c => c.ActualAddress)
+                .Include(c => c.ManagementPeaple)
+                .Include(c => c.BankDetails)
+                    .ThenInclude(bd => bd.CorrespondentBanks)
+                .Include(c => c.ApiKeys)
+                .FirstOrDefault(c => c.Id == id);
+
             if (company == null)
             {
                 return NotFound();
             }
-            return Ok(company);
+
+            var dto = MapToDto(company);
+            return Ok(dto);
+        }
+
+        private static object MapToDto(Company c)
+        {
+            return new
+            {
+                id = c.Id,
+                name = c.Name,
+                companyType = c.CompanyType,
+                codeCompany = c.CodeCompany,
+                ipn = c.Ipn,
+                taxSystem = c.TaxSystem,
+                additionalInfo = c.AdditionalInfo,
+                logoPath = c.LogoPath,
+                contact = c.Contact == null ? null : new
+                {
+                    phoneNumber = c.Contact.PhoneNumber,
+                    email = c.Contact.Email,
+                    website = c.Contact.Website
+                },
+                legalAddress = c.LegalAddress == null ? null : new
+                {
+                    country = c.LegalAddress.Country,
+                    city = c.LegalAddress.City,
+                    region = c.LegalAddress.Region,
+                    postalCode = c.LegalAddress.PostalCode,
+                    streetAddress = c.LegalAddress.StreetAddress,
+                    buildingNumber = c.LegalAddress.BuildingNumber,
+                    apartmentNumber = c.LegalAddress.ApartmentNumber
+                },
+                ukrPoshtaAddress = c.UkrPoshtaAddress == null ? null : new
+                {
+                    country = c.UkrPoshtaAddress.Country,
+                    city = c.UkrPoshtaAddress.City,
+                    region = c.UkrPoshtaAddress.Region,
+                    postalCode = c.UkrPoshtaAddress.PostalCode,
+                    streetAddress = c.UkrPoshtaAddress.StreetAddress,
+                    buildingNumber = c.UkrPoshtaAddress.BuildingNumber,
+                    apartmentNumber = c.UkrPoshtaAddress.ApartmentNumber
+                },
+                novaPoshtaRecipient = c.NovaPoshtaRecipient == null ? null : new
+                {
+                    recipientType = c.NovaPoshtaRecipient.RecipientType,
+                    phone = c.NovaPoshtaRecipient.Phone,
+                    lastName = c.NovaPoshtaRecipient.LastName,
+                    firstName = c.NovaPoshtaRecipient.FirstName,
+                    middleName = c.NovaPoshtaRecipient.MiddleName,
+                    edrpouCode = c.NovaPoshtaRecipient.EdrpouCode,
+                    companyName = c.NovaPoshtaRecipient.CompanyName,
+                    ownershipForm = c.NovaPoshtaRecipient.OwnershipForm,
+                    orgPhone = c.NovaPoshtaRecipient.OrgPhone,
+                    orgLastName = c.NovaPoshtaRecipient.OrgLastName,
+                    orgFirstName = c.NovaPoshtaRecipient.OrgFirstName,
+                    orgMiddleName = c.NovaPoshtaRecipient.OrgMiddleName
+                },
+                novaPoshtaDelivery = c.NovaPoshtaDelivery == null ? null : new
+                {
+                    deliveryType = c.NovaPoshtaDelivery.DeliveryType,
+                    city = c.NovaPoshtaDelivery.City,
+                    branch = c.NovaPoshtaDelivery.Branch,
+                    street = c.NovaPoshtaDelivery.Street,
+                    building = c.NovaPoshtaDelivery.Building,
+                    apartment = c.NovaPoshtaDelivery.Apartment,
+                    addressComment = c.NovaPoshtaDelivery.AddressComment,
+                    postomatNumber = c.NovaPoshtaDelivery.PostomatNumber,
+                    digitalAddressReference = c.NovaPoshtaDelivery.DigitalAddressReference
+                },
+                actualAddress = c.ActualAddress == null ? null : new
+                {
+                    country = c.ActualAddress.Country,
+                    city = c.ActualAddress.City,
+                    region = c.ActualAddress.Region,
+                    postalCode = c.ActualAddress.PostalCode,
+                    streetAddress = c.ActualAddress.StreetAddress,
+                    buildingNumber = c.ActualAddress.BuildingNumber,
+                    apartmentNumber = c.ActualAddress.ApartmentNumber
+                },
+                managementPeaple = c.ManagementPeaple?.Select(p => new
+                {
+                    id = p.Id,
+                    fullName = p.FullName,
+                    position = p.Position,
+                    phoneNumber = p.PhoneNumber,
+                    email = p.Email
+                }).ToList(),
+                bankDetails = c.BankDetails?.Select(bd => new
+                {
+                    typeAccount = bd.TypeAccount,
+                    currency = bd.Currency,
+                    bankName = bd.BankName,
+                    bankMfo = bd.BankMfo,
+                    iban = bd.IBAN,
+                    swift = bd.SWIFT,
+                    bankOfBeneficiary = bd.BankOfBeneficiary,
+                    correspondentBanks = bd.CorrespondentBanks?.Select(cb => new
+                    {
+                        bankName = cb.BankName,
+                        swift = cb.SWIFT
+                    }).ToList()
+                }).ToList(),
+                apiKeys = c.ApiKeys == null ? null : new
+                {
+                    novaPoshta = c.ApiKeys.NovaPoshta,
+                    lardyTrans = c.ApiKeys.LardyTrans
+                }
+            };
         }
 
         [HttpPost]
@@ -48,7 +179,6 @@ namespace TMS.Controllers
                 AdditionalInfo = dto.AdditionalInfo,
                 LogoPath = dto.LogoPath,
 
-                // Контакти
                 Contact = new ContactInfo
                 {
                     PhoneNumber = dto.PhoneNumber,
@@ -56,7 +186,6 @@ namespace TMS.Controllers
                     Website = dto.Website
                 },
 
-                // Юридична адреса
                 LegalAddress = new Address
                 {
                     Country = dto.LegalAddress_Country,
@@ -68,19 +197,50 @@ namespace TMS.Controllers
                     ApartmentNumber = dto.LegalAddress_ApartmentNumber
                 },
 
-                // Поштова адреса
-                PostalAddress = new Address
+                UkrPoshtaAddress = new Address
                 {
-                    Country = dto.PostalAddress_Country,
-                    City = dto.PostalAddress_City,
-                    Region = dto.PostalAddress_Region,
-                    PostalCode = dto.PostalAddress_PostalCode,
-                    StreetAddress = dto.PostalAddress_StreetAddress,
-                    BuildingNumber = dto.PostalAddress_BuildingNumber,
-                    ApartmentNumber = dto.PostalAddress_ApartmentNumber
+                    Country = dto.UkrPoshtaAddress_Country,
+                    City = dto.UkrPoshtaAddress_City,
+                    Region = dto.UkrPoshtaAddress_Region,
+                    PostalCode = dto.UkrPoshtaAddress_PostalCode,
+                    StreetAddress = dto.UkrPoshtaAddress_StreetAddress,
+                    BuildingNumber = dto.UkrPoshtaAddress_BuildingNumber,
+                    ApartmentNumber = dto.UkrPoshtaAddress_ApartmentNumber
+                },
+                
+                NovaPoshtaRecipient = new NovaPoshtaRecipient
+                {
+                    RecipientType = dto.NovaPoshtaRecipientType.HasValue 
+                        ? (NovaPoshtaRecipientType)dto.NovaPoshtaRecipientType.Value 
+                        : (NovaPoshtaRecipientType)0,
+                    Phone = dto.NP_Phone,
+                    LastName = dto.NP_LastName,
+                    FirstName = dto.NP_FirstName,
+                    MiddleName = dto.NP_MiddleName,
+                    EdrpouCode = dto.NP_EdrpouCode,
+                    CompanyName = dto.NP_CompanyName,
+                    OwnershipForm = dto.NP_OwnershipForm,
+                    OrgPhone = dto.NP_OrgPhone,
+                    OrgLastName = dto.NP_OrgLastName,
+                    OrgFirstName = dto.NP_OrgFirstName,
+                    OrgMiddleName = dto.NP_OrgMiddleName
+                },
+                
+                NovaPoshtaDelivery = new NovaPoshtaDelivery
+                {
+                    DeliveryType = dto.NovaPoshtaDeliveryType.HasValue 
+                        ? (NovaPoshtaDeliveryType)dto.NovaPoshtaDeliveryType.Value 
+                        : (NovaPoshtaDeliveryType)0,
+                    City = dto.NPD_City,
+                    Branch = dto.NPD_Branch,
+                    Street = dto.NPD_Street,
+                    Building = dto.NPD_Building,
+                    Apartment = dto.NPD_Apartment,
+                    AddressComment = dto.NPD_AddressComment,
+                    PostomatNumber = dto.NPD_PostomatNumber,
+                    DigitalAddressReference = dto.NPD_DigitalAddressReference
                 },
 
-                // Фактична адреса
                 ActualAddress = new Address
                 {
                     Country = dto.ActualAddress_Country,
@@ -92,14 +252,8 @@ namespace TMS.Controllers
                     ApartmentNumber = dto.ActualAddress_ApartmentNumber
                 },
 
-                // Керівництво
-                Management = new Management
-                {
-                    DirectorFullName = dto.DirectorFullName,
-                    AccountantFullName = dto.AccountantFullName
-                },
+                ManagementPeaple = dto.ManagementPeaple ?? new List<Peaple>(),
 
-                // Банківські реквізити (список)
                 BankDetails = dto.BankDetails?.Select(bd => new BankDetails
                 {
                     TypeAccount = bd.TypeAccount,
@@ -116,7 +270,6 @@ namespace TMS.Controllers
                     }).ToList() ?? new List<CorrespondentBanks>()
                 }).ToList() ?? new List<BankDetails>(),
 
-                // API інтеграції
                 ApiKeys = new ApiKeys
                 {
                     NovaPoshta = dto.ApiNovaPoshtaKey,
@@ -126,19 +279,27 @@ namespace TMS.Controllers
 
             ctx.Companies.Add(newCompany);
             ctx.SaveChanges();
-            return CreatedAtAction(nameof(GetCompanyById), new { id = newCompany.Id }, newCompany);
+            return CreatedAtAction(nameof(GetCompanyById), new { id = newCompany.Id }, MapToDto(newCompany));
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateCompany(int id, [FromBody] PostCompanyDTO dto)
         {
-            var company = ctx.Companies.Find(id);
-            if (company == null)
-            {
-                return NotFound();
-            }
+            var company = ctx.Companies
+                .Include(c => c.Contact)
+                .Include(c => c.LegalAddress)
+                .Include(c => c.UkrPoshtaAddress)
+                .Include(c => c.ActualAddress)
+                .Include(c => c.ManagementPeaple)
+                .Include(c => c.BankDetails)
+                    .ThenInclude(bd => bd.CorrespondentBanks)
+                .Include(c => c.ApiKeys)
+                .Include(c => c.NovaPoshtaRecipient)
+                .Include(c => c.NovaPoshtaDelivery)
+                .FirstOrDefault(c => c.Id == id);
 
-            // Основна інформація
+            if (company == null) return NotFound();
+
             company.Name = dto.Name;
             company.CompanyType = dto.CompanyType;
             company.CodeCompany = dto.CodeCompany;
@@ -147,12 +308,12 @@ namespace TMS.Controllers
             company.AdditionalInfo = dto.AdditionalInfo;
             company.LogoPath = dto.LogoPath;
 
-            // Контакти
+            company.Contact ??= new ContactInfo();
             company.Contact.PhoneNumber = dto.PhoneNumber;
             company.Contact.Email = dto.Email;
             company.Contact.Website = dto.Website;
 
-            // Юридична адреса
+            company.LegalAddress ??= new Address();
             company.LegalAddress.Country = dto.LegalAddress_Country;
             company.LegalAddress.City = dto.LegalAddress_City;
             company.LegalAddress.Region = dto.LegalAddress_Region;
@@ -161,16 +322,53 @@ namespace TMS.Controllers
             company.LegalAddress.BuildingNumber = dto.LegalAddress_BuildingNumber;
             company.LegalAddress.ApartmentNumber = dto.LegalAddress_ApartmentNumber;
 
-            // Поштова адреса
-            company.PostalAddress.Country = dto.PostalAddress_Country;
-            company.PostalAddress.City = dto.PostalAddress_City;
-            company.PostalAddress.Region = dto.PostalAddress_Region;
-            company.PostalAddress.PostalCode = dto.PostalAddress_PostalCode;
-            company.PostalAddress.StreetAddress = dto.PostalAddress_StreetAddress;
-            company.PostalAddress.BuildingNumber = dto.PostalAddress_BuildingNumber;
-            company.PostalAddress.ApartmentNumber = dto.PostalAddress_ApartmentNumber;
+            company.UkrPoshtaAddress ??= new Address();
+            company.UkrPoshtaAddress.Country = dto.UkrPoshtaAddress_Country;
+            company.UkrPoshtaAddress.City = dto.UkrPoshtaAddress_City;
+            company.UkrPoshtaAddress.Region = dto.UkrPoshtaAddress_Region;
+            company.UkrPoshtaAddress.PostalCode = dto.UkrPoshtaAddress_PostalCode;
+            company.UkrPoshtaAddress.StreetAddress = dto.UkrPoshtaAddress_StreetAddress;
+            company.UkrPoshtaAddress.BuildingNumber = dto.UkrPoshtaAddress_BuildingNumber;
+            company.UkrPoshtaAddress.ApartmentNumber = dto.UkrPoshtaAddress_ApartmentNumber;
 
-            // Фактична адреса
+            // Нова Пошта - Отримувач (завжди створюємо/оновлюємо)
+            company.NovaPoshtaRecipient ??= new NovaPoshtaRecipient();
+            
+            if (dto.NovaPoshtaRecipientType.HasValue)
+            {
+                company.NovaPoshtaRecipient.RecipientType = (NovaPoshtaRecipientType)dto.NovaPoshtaRecipientType.Value;
+            }
+            
+            company.NovaPoshtaRecipient.Phone = dto.NP_Phone;
+            company.NovaPoshtaRecipient.LastName = dto.NP_LastName;
+            company.NovaPoshtaRecipient.FirstName = dto.NP_FirstName;
+            company.NovaPoshtaRecipient.MiddleName = dto.NP_MiddleName;
+            company.NovaPoshtaRecipient.EdrpouCode = dto.NP_EdrpouCode;
+            company.NovaPoshtaRecipient.CompanyName = dto.NP_CompanyName;
+            company.NovaPoshtaRecipient.OwnershipForm = dto.NP_OwnershipForm;
+            company.NovaPoshtaRecipient.OrgPhone = dto.NP_OrgPhone;
+            company.NovaPoshtaRecipient.OrgLastName = dto.NP_OrgLastName;
+            company.NovaPoshtaRecipient.OrgFirstName = dto.NP_OrgFirstName;
+            company.NovaPoshtaRecipient.OrgMiddleName = dto.NP_OrgMiddleName;
+
+            // Нова Пошта - Доставка (завжди створюємо/оновлюємо)
+            company.NovaPoshtaDelivery ??= new NovaPoshtaDelivery();
+            
+            if (dto.NovaPoshtaDeliveryType.HasValue)
+            {
+                company.NovaPoshtaDelivery.DeliveryType = (NovaPoshtaDeliveryType)dto.NovaPoshtaDeliveryType.Value;
+            }
+            
+            company.NovaPoshtaDelivery.City = dto.NPD_City;
+            company.NovaPoshtaDelivery.Branch = dto.NPD_Branch;
+            company.NovaPoshtaDelivery.Street = dto.NPD_Street;
+            company.NovaPoshtaDelivery.Building = dto.NPD_Building;
+            company.NovaPoshtaDelivery.Apartment = dto.NPD_Apartment;
+            company.NovaPoshtaDelivery.AddressComment = dto.NPD_AddressComment;
+            company.NovaPoshtaDelivery.PostomatNumber = dto.NPD_PostomatNumber;
+            company.NovaPoshtaDelivery.DigitalAddressReference = dto.NPD_DigitalAddressReference;
+
+            company.ActualAddress ??= new Address();
             company.ActualAddress.Country = dto.ActualAddress_Country;
             company.ActualAddress.City = dto.ActualAddress_City;
             company.ActualAddress.Region = dto.ActualAddress_Region;
@@ -179,11 +377,9 @@ namespace TMS.Controllers
             company.ActualAddress.BuildingNumber = dto.ActualAddress_BuildingNumber;
             company.ActualAddress.ApartmentNumber = dto.ActualAddress_ApartmentNumber;
 
-            // Керівництво
-            company.Management.DirectorFullName = dto.DirectorFullName;
-            company.Management.AccountantFullName = dto.AccountantFullName;
+            if (company.BankDetails != null && company.BankDetails.Any())
+                ctx.RemoveRange(company.BankDetails);
 
-            // Банківські реквізити (оновлення списку)
             company.BankDetails = dto.BankDetails?.Select(bd => new BankDetails
             {
                 TypeAccount = bd.TypeAccount,
@@ -200,7 +396,7 @@ namespace TMS.Controllers
                 }).ToList() ?? new List<CorrespondentBanks>()
             }).ToList() ?? new List<BankDetails>();
 
-            // API інтеграції
+            company.ApiKeys ??= new ApiKeys();
             company.ApiKeys.NovaPoshta = dto.ApiNovaPoshtaKey;
             company.ApiKeys.LardyTrans = dto.ApiLardyTransKey;
 

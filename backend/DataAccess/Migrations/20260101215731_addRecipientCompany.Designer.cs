@@ -4,6 +4,7 @@ using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(TMSDbContext))]
-    partial class TMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260101215731_addRecipientCompany")]
+    partial class addRecipientCompany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,45 +24,6 @@ namespace DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("DataAccess.Data.Entities.BankDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BankMfo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BankName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BankOfBeneficiary")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Currency")
-                        .HasColumnType("int");
-
-                    b.Property<string>("IBAN")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SWIFT")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TypeAccount")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("BankDetails");
-                });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Company", b =>
                 {
@@ -100,36 +64,6 @@ namespace DataAccess.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.Peaple", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Position")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("Peaples");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Tracking", b =>
                 {
                     b.Property<int>("Id")
@@ -139,8 +73,7 @@ namespace DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("Amount")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
@@ -205,9 +138,6 @@ namespace DataAccess.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -260,9 +190,6 @@ namespace DataAccess.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ThirdName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -271,8 +198,6 @@ namespace DataAccess.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -418,50 +343,10 @@ namespace DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.BankDetails", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Company", "Company")
-                        .WithMany("BankDetails")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.OwnsMany("DataAccess.Data.Entities.CorrespondentBanks", "CorrespondentBanks", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<int>("BankDetailsId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("BankName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("SWIFT")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("BankDetailsId");
-
-                            b1.ToTable("CorrespondentBanks");
-
-                            b1.WithOwner()
-                                .HasForeignKey("BankDetailsId");
-                        });
-
-                    b.Navigation("Company");
-
-                    b.Navigation("CorrespondentBanks");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Company", b =>
                 {
-                    b.HasOne("DataAccess.Data.Entities.Company", "ParentCompany")
-                        .WithMany("ChildCompanies")
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany("Clients")
                         .HasForeignKey("ParentCompanyId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -482,6 +367,80 @@ namespace DataAccess.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
+                        });
+
+                    b.OwnsMany("DataAccess.Data.Entities.BankDetails", "BankDetails", b1 =>
+                        {
+                            b1.Property<int>("CompanyId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("BankMfo")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("BankName")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("BankOfBeneficiary")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("IBAN")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("SWIFT")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("TypeAccount")
+                                .HasColumnType("int");
+
+                            b1.HasKey("CompanyId", "Id");
+
+                            b1.ToTable("BankDetails");
+
+                            b1.WithOwner("Company")
+                                .HasForeignKey("CompanyId");
+
+                            b1.OwnsMany("DataAccess.Data.Entities.CorrespondentBanks", "CorrespondentBanks", b2 =>
+                                {
+                                    b2.Property<int>("Id")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("int");
+
+                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
+
+                                    b2.Property<int>("BankDetailsId")
+                                        .HasColumnType("int");
+
+                                    b2.Property<string>("BankName")
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.Property<int>("CompanyId")
+                                        .HasColumnType("int");
+
+                                    b2.Property<string>("SWIFT")
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.HasKey("Id", "BankDetailsId");
+
+                                    b2.HasIndex("CompanyId", "BankDetailsId");
+
+                                    b2.ToTable("CorrespondentBanks");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("CompanyId", "BankDetailsId");
+                                });
+
+                            b1.Navigation("Company");
+
+                            b1.Navigation("CorrespondentBanks");
                         });
 
                     b.OwnsOne("DataAccess.Data.Entities.Address", "ActualAddress", b1 =>
@@ -552,7 +511,7 @@ namespace DataAccess.Migrations
                                 .HasForeignKey("CompanyId");
                         });
 
-                    b.OwnsOne("DataAccess.Data.Entities.Address", "UkrPoshtaAddress", b1 =>
+                    b.OwnsOne("DataAccess.Data.Entities.Address", "PostalAddress", b1 =>
                         {
                             b1.Property<int>("CompanyId")
                                 .HasColumnType("int");
@@ -608,103 +567,23 @@ namespace DataAccess.Migrations
                                 .HasForeignKey("CompanyId");
                         });
 
-                    b.OwnsOne("DataAccess.Data.Entities.NovaPoshtaDelivery", "NovaPoshtaDelivery", b1 =>
+                    b.OwnsOne("DataAccess.Data.Entities.Management", "Management", b1 =>
                         {
                             b1.Property<int>("CompanyId")
                                 .HasColumnType("int");
 
-                            b1.Property<string>("AddressComment")
+                            b1.Property<string>("AccountantFullName")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("Apartment")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Branch")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Building")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("City")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("DeliveryType")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("DigitalAddressReference")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("Id")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("PostomatNumber")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Street")
+                            b1.Property<string>("DirectorFullName")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("CompanyId");
 
                             b1.ToTable("Companies");
 
-                            b1.WithOwner("Company")
+                            b1.WithOwner()
                                 .HasForeignKey("CompanyId");
-
-                            b1.Navigation("Company");
-                        });
-
-                    b.OwnsOne("DataAccess.Data.Entities.NovaPoshtaRecipient", "NovaPoshtaRecipient", b1 =>
-                        {
-                            b1.Property<int>("CompanyId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("CompanyName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("EdrpouCode")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("FirstName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("Id")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("LastName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("MiddleName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OrgFirstName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OrgLastName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OrgMiddleName")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OrgPhone")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("OwnershipForm")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Phone")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("RecipientType")
-                                .HasColumnType("int");
-
-                            b1.HasKey("CompanyId");
-
-                            b1.ToTable("Companies");
-
-                            b1.WithOwner("Company")
-                                .HasForeignKey("CompanyId");
-
-                            b1.Navigation("Company");
                         });
 
                     b.Navigation("ActualAddress")
@@ -713,31 +592,19 @@ namespace DataAccess.Migrations
                     b.Navigation("ApiKeys")
                         .IsRequired();
 
+                    b.Navigation("BankDetails");
+
                     b.Navigation("Contact")
                         .IsRequired();
 
                     b.Navigation("LegalAddress")
                         .IsRequired();
 
-                    b.Navigation("NovaPoshtaDelivery");
-
-                    b.Navigation("NovaPoshtaRecipient");
-
-                    b.Navigation("ParentCompany");
-
-                    b.Navigation("UkrPoshtaAddress")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Peaple", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Company", "Company")
-                        .WithMany("ManagementPeaple")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.Navigation("Management")
                         .IsRequired();
 
-                    b.Navigation("Company");
+                    b.Navigation("PostalAddress")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Tracking", b =>
@@ -747,15 +614,6 @@ namespace DataAccess.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
                 });
@@ -813,13 +671,9 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Data.Entities.Company", b =>
                 {
-                    b.Navigation("BankDetails");
-
-                    b.Navigation("ChildCompanies");
+                    b.Navigation("Clients");
 
                     b.Navigation("CompanyTrackings");
-
-                    b.Navigation("ManagementPeaple");
                 });
 #pragma warning restore 612, 618
         }

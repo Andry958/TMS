@@ -2,6 +2,7 @@
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
 
@@ -83,7 +84,8 @@ namespace TMS.Controllers
                 RecipientFullName = np.RecipientFullName,
                 DaysType = "calendar",
                 DaysCount = 0,
-                CompanyId = dto.IdCompany
+                CompanyId = dto.IdCompany,
+                RecipientCompany = np.CounterpartyRecipientDescription
             };
 
             _ctx.Trackings.Add(tracking);
@@ -154,15 +156,27 @@ namespace TMS.Controllers
                 var np = await LoadFromNovaPoshta(t.Number, company.ApiKeys.NovaPoshta);
                 if (np != null)
                 {
-                    t.Status = np.Status;
-                    t.DeliveryDate = np.RecipientDateTime;
-                    t.RecipientFullName = np.RecipientFullName;
+                    // Завжди оновлюємо статус, навіть якщо він порожній
+                    t.Status = np.Status ?? t.Status;
+
+                    // Дата доставки: якщо є пусто або null, залишаємо стару
+                    if (!string.IsNullOrEmpty(np.RecipientDateTime) && np.RecipientDateTime.Trim() != "")
+                        t.DeliveryDate = np.RecipientDateTime;
+
+                    // Інші поля
+                    if (!string.IsNullOrEmpty(np.RecipientFullName))
+                        t.RecipientFullName = np.RecipientFullName;
+
+                    if (!string.IsNullOrEmpty(np.CounterpartyRecipientDescription))
+                        t.RecipientCompany = np.CounterpartyRecipientDescription;
                 }
             }
 
             await _ctx.SaveChangesAsync();
             return Ok(new { message = "NP data refreshed", count = trackings.Count });
         }
+
+
 
         // ================= LOAD FROM NP =================
         private async Task<NovaPoshtaTrackingDto?> LoadFromNovaPoshta(string ttn, string apiKey)
@@ -198,6 +212,7 @@ namespace TMS.Controllers
     // ================= DTOs =================
     public class NovaPoshtaTrackingDto
     {
+        public string CounterpartyRecipientDescription { get; set; } = null!;
         public string Number { get; set; } = null!;
         public string Status { get; set; } = null!;
         public string? ActualDeliveryDate { get; set; }

@@ -56,6 +56,8 @@ namespace DataAccess.Data.Entities
         // Відмітка про оплату
         public bool PaymentMark { get; set; }
 
+        public string? RecipientCompany { get; set; }
+
         public int CompanyId { get; set; }
         public Company Company { get; set; } = null!;
     }

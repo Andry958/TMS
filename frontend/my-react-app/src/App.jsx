@@ -13,6 +13,9 @@ import MyCompanyPage from "./pages/MyCompanyPage";
 import NovaPoshtaTrackingPage from "./pages/NovaPoshtaTrackingPage";
 import TrackingDetailPage from "./pages/TrackingDetailPage";
 import TrackingEditPage from "./pages/TrackingEditPage";
+import ClientsPage from "./pages/ClientsPage";
+import ClientCard from "./pages/ClientCard";
+import CreateClientForm from "./pages/CreateClientForm";
 import { useCompany } from "./context/CompanyContext";
 function App() {
   const [activeSection, setActiveSection] = useState("home");
@@ -42,6 +45,39 @@ function App() {
       <Route
         path="/tracking/edit/:trackingId"
         element={<TrackingEditPage />}
+      />
+      <Route
+        path="/clients"
+        element={
+          <MainLayout
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
+          >
+            <ClientsPage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/clients/create"
+        element={
+          <MainLayout
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
+          >
+            <CreateClientForm />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/clients/:clientId"
+        element={
+          <MainLayout
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
+          >
+            <ClientCard />
+          </MainLayout>
+        }
       />
       <Route
         path="/*"

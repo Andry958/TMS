@@ -9,13 +9,19 @@ import "./styles/theme.css";
 
 import { BrowserRouter } from "react-router-dom"; 
 import { CompanyProvider } from "./context/CompanyContext.jsx";
+import { ToastProvider } from "./context/ToastContext.jsx";
+import { ApiProvider } from './context/ApiContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <ApiProvider>
     <BrowserRouter>
       <CompanyProvider>
-        <App />
+        <ToastProvider>
+          <App />
+        </ToastProvider>
       </CompanyProvider>
     </BrowserRouter>
+    </ApiProvider>
   </StrictMode>,
 )
