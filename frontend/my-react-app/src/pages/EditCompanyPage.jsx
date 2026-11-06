@@ -1,22 +1,11 @@
 import { useState, useEffect } from "react";
-import { useToast } from "../context/ToastContext";
+import { useToast } from "../context/useToast";
 import { useCompany } from "../context/CompanyContext";
 import { useApi } from "../context/ApiContext";
 import NovaPoshtaForm from "../components/common/NovaPoshtaForm";
 import NovaPoshtaDisplay from "../components/common/NovaPoshtaDisplay";
-
-const currencies = [
-  { code: 0, name: "UAH - Українська гривня" },
-  { code: 1, name: "USD - Долар США" },
-  { code: 2, name: "EUR - Євро" },
-  { code: 3, name: "PLN - Злотий" },
-  { code: 4, name: "GBP - Фунт стерлінгів" }
-];
-
-const accountTypes = [
-  { value: 0, name: "Гривневий" },
-  { value: 1, name: "Валютний" }
-];
+import { accountTypes, currencies, UAH_CURRENCY_CODE, normalizeCurrencyCode } from "../constants/bankDetails";
+import "../styles/my-company.css";
 
 const positionTypes = [
   { value: 0, name: "Директор" },
@@ -27,9 +16,9 @@ const positionTypes = [
 
 function Section({ title, children }) {
   return (
-    <div className="card shadow-sm h-100">
+    <div className="card shadow-sm h-100 edit-company-card">
       <div className="card-body">
-        <h5 className="mb-3">{title}</h5>
+        <h5 className="mb-3 edit-company-card__title">{title}</h5>
         {children}
       </div>
     </div>
@@ -147,7 +136,7 @@ function EditCompanyPage({ setActiveSection }) {
 
           bankDetails: (data.bankDetails || []).map(bd => ({
             typeAccount: bd.typeAccount ?? 0,
-            currency: bd.currency ?? 0,
+            currency: normalizeCurrencyCode(bd.currency),
             bankName: bd.bankName ?? "",
             bankMfo: bd.bankMfo ?? "",
             iban: bd.iban ?? "",
@@ -205,10 +194,9 @@ function EditCompanyPage({ setActiveSection }) {
         if (typeVal === 0) {
           newBankDetails[index] = {
             typeAccount: 0,
-            currency: 0,
+            currency: UAH_CURRENCY_CODE,
             bankName: newBankDetails[index].bankName,
             bankMfo: newBankDetails[index].bankMfo,
-            iban: "",
             swift: "",
             bankOfBeneficiary: "",
             correspondentBanks: []
@@ -262,7 +250,7 @@ function EditCompanyPage({ setActiveSection }) {
         ...prev.bankDetails,
         {
           typeAccount: 0,
-          currency: 0,
+          currency: UAH_CURRENCY_CODE,
           bankName: "",
           bankMfo: "",
           iban: "",
@@ -426,11 +414,19 @@ function EditCompanyPage({ setActiveSection }) {
   if (!form) return <div className="text-center mt-5">Немає даних</div>;
 
   return (
-    <div className="container mt-5">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Редагування компанії</h2>
-        <div className="d-flex gap-2">
-          <button className="btn btn-success" onClick={handleSubmit}>
+    <div className="edit-company-page">
+      <div className="sticky-action-bar company-edit-actions edit-company-actions">
+        <div className="company-edit-actions__title">
+          <button className="btn btn-outline-secondary" onClick={handleCancel}>
+            ← Назад до компанії
+          </button>
+          <div className="edit-company-heading">
+            <span className="my-company-eyebrow">ПРОФІЛЬ КОМПАНІЇ</span>
+            <h1 className="mb-0">Редагування компанії</h1>
+          </div>
+        </div>
+        <div className="d-flex gap-2 company-edit-actions__controls">
+          <button className="btn btn-primary" onClick={handleSubmit}>
             💾 Зберегти
           </button>
           <button className="btn btn-outline-secondary" onClick={handleCancel}>
@@ -441,9 +437,9 @@ function EditCompanyPage({ setActiveSection }) {
 
       <div className="row g-4 mb-4">
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 edit-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>🏢 Основна інформація</h5>
+              <h5 className="mb-3 edit-company-card__title">🏢 Основна інформація</h5>
               <div className="mb-2">
                 <label className="form-label">Назва компанії</label>
                 <input className="form-control" name="name" value={form.name} onChange={handleChange} />
@@ -469,11 +465,11 @@ function EditCompanyPage({ setActiveSection }) {
         </div>
 
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 edit-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>👥 Керівництво та персонал</h5>
+              <h5 className="mb-3 edit-company-card__title">👥 Керівництво та персонал</h5>
               <div className="mb-3">
-                <h6 style={{ color: '#e60000' }}>Список працівників</h6>
+                <h6 className="edit-company-subtitle">Список працівників</h6>
                 {people.length > 0 ? (
                   <div className="list-group mb-3">
                     {people.map((person) => (
@@ -492,8 +488,8 @@ function EditCompanyPage({ setActiveSection }) {
                   <p className="text-muted">Немає працівників</p>
                 )}
                 
-                <h6 className="mt-3" style={{ color: '#e60000' }}>➕ Додати нового працівника</h6>
-                <div className="border rounded p-3" style={{ backgroundColor: '#f8f9fa' }}>
+                <h6 className="mt-3 edit-company-subtitle">➕ Додати нового працівника</h6>
+                <div className="border rounded p-3 edit-company-subcard">
                   <div className="mb-2">
                     <label className="form-label">ПІБ</label>
                     <input className="form-control" name="fullName" value={newPerson.fullName} onChange={handlePersonChange} placeholder="Повне ім'я" />
@@ -511,7 +507,7 @@ function EditCompanyPage({ setActiveSection }) {
                     <input className="form-control" name="phoneNumber" value={newPerson.phoneNumber} onChange={handlePersonChange} placeholder="+380..." />
                   </div>
                   <div className="mb-2">
-                    <label className="form-label">Email</label>
+                    <label className="form-label">Електронна пошта</label>
                     <input className="form-control" type="email" name="email" value={newPerson.email} onChange={handlePersonChange} placeholder="email@example.com" />
                   </div>
                   <button className="btn btn-success btn-sm w-100" onClick={addPerson}>+ Додати працівника</button>
@@ -524,15 +520,15 @@ function EditCompanyPage({ setActiveSection }) {
 
       <div className="row g-4 mb-4">
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 edit-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>📞 Контактна інформація</h5>
+              <h5 className="mb-3 edit-company-card__title">📞 Контактна інформація</h5>
               <div className="mb-2">
                 <label className="form-label">Телефон</label>
                 <input className="form-control" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} placeholder="+380..." />
               </div>
               <div className="mb-2">
-                <label className="form-label">Email</label>
+                <label className="form-label">Електронна пошта</label>
                 <input className="form-control" type="email" name="email" value={form.email} onChange={handleChange} placeholder="email@example.com" />
               </div>
               <div className="mb-0">
@@ -544,9 +540,9 @@ function EditCompanyPage({ setActiveSection }) {
         </div>
 
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 edit-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>📍 Юридична адреса</h5>
+              <h5 className="mb-3 edit-company-card__title">📍 Юридична адреса</h5>
               <div className="row g-2">
                 <div className="col-8">
                   <label className="form-label">Вулиця</label>
@@ -588,9 +584,9 @@ function EditCompanyPage({ setActiveSection }) {
 
       <div className="row g-4 mb-4">
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 edit-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>📮 Фактична (Поштова) адреса</h5>
+              <h5 className="mb-3 edit-company-card__title">📮 Фактична (Поштова) адреса</h5>
               <div className="row g-2">
                 <div className="col-8">
                   <label className="form-label">Вулиця</label>
@@ -630,9 +626,9 @@ function EditCompanyPage({ setActiveSection }) {
         </div>
 
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 edit-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>📝 Додаткова інформація</h5>
+              <h5 className="mb-3 edit-company-card__title">📝 Додаткова інформація</h5>
               <textarea className="form-control" rows="8" name="additionalInfo" value={form.additionalInfo} onChange={handleChange} placeholder="Коментар / примітки" />
             </div>
           </div>
@@ -641,11 +637,11 @@ function EditCompanyPage({ setActiveSection }) {
 
       <div className="row g-4 mb-4">
         <div className="col-12">
-          <div className="card shadow-sm">
+          <div className="card shadow-sm edit-company-card">
             <div className="card-body">
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="mb-0">Банківські реквізити</h5>
-                <button className="btn btn-success btn-sm" onClick={addBankAccount}>
+                <h5 className="mb-0 edit-company-card__title">Банківські реквізити</h5>
+                <button className="btn btn-primary btn-sm" onClick={addBankAccount}>
                   + Додати рахунок
                 </button>
               </div>
@@ -653,7 +649,7 @@ function EditCompanyPage({ setActiveSection }) {
               <div className="row g-3">
                 {form.bankDetails.map((bank, index) => (
                   <div key={index} className="col-md-6">
-                    <div className="card border">
+                    <div className="card border edit-company-bank-card">
                       <div className="card-body">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                           <h6>Рахунок #{index + 1} <span className="badge bg-primary ms-2">{accountTypes.find(t => t.value === bank.typeAccount)?.name}</span></h6>
@@ -672,7 +668,7 @@ function EditCompanyPage({ setActiveSection }) {
                         <p className="mb-1"><strong>Валюта:</strong> 
                           <select className="form-control d-inline-block w-50 ms-2" value={bank.currency} onChange={(e) => handleBankChange(index, 'currency', parseInt(e.target.value))} disabled={bank.typeAccount === 0}>
                             {bank.typeAccount === 0 ? (
-                              <option value={0}>{currencies.find(c => c.code === 0).name}</option>
+                              <option value={UAH_CURRENCY_CODE}>{currencies.find(c => c.code === UAH_CURRENCY_CODE).name}</option>
                             ) : (
                               currencies.map(curr => (
                                 <option key={curr.code} value={curr.code}>{curr.name}</option>
@@ -758,9 +754,9 @@ function EditCompanyPage({ setActiveSection }) {
 
       <div className="row g-4 mb-5">
         <div className="col-md-12">
-          <div className="card shadow-sm" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm edit-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>🔑 API інтеграції</h5>
+              <h5 className="mb-3 edit-company-card__title">🔑 API інтеграції</h5>
               <div className="row g-3">
                 <div className="col-md-6">
                   <label className="form-label">🚚 Nova Poshta API Key</label>

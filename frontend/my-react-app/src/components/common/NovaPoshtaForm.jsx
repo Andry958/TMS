@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "../../context/useToast";
 import { useApi } from "../../context/ApiContext";
-
+import "../../styles/novaPoshtaForm.css";
 /**
  * Універсальний компонент для роботи з Новою Поштою
  * Використовується в EditCompanyPage, ClientCard та інших місцях
@@ -149,17 +149,24 @@ function NovaPoshtaForm({ form, setForm, isEditing, apiNovaPoshta }) {
   };
 
   return (
-    <div className="row g-4 mb-4">
-      <div className="col-12">
-        <div className="card shadow-sm" style={{ borderLeft: '4px solid #e60000' }}>
+    <section className="nova-poshta-form">
+      <div className="row g-4">
+        <div className="col-12">
+          <div className="card nova-poshta-form__card">
           <div className="card-body">
-            <h5 className="mb-3" style={{ color: '#e60000' }}>🚚 Нова Пошта</h5>
+            <div className="nova-poshta-form__heading">
+              <span className="nova-poshta-form__icon" aria-hidden="true">🚚</span>
+              <div>
+                <h5 className="mb-1">Нова Пошта</h5>
+                <p className="mb-0">Дані отримувача та параметри доставки</p>
+              </div>
+            </div>
             
             <div className="row g-4">
               {/* Отримувач */}
               <div className="col-md-6">
-                <div className="border rounded p-3" style={{ backgroundColor: '#f8f9fa' }}>
-                  <h6 className="mb-3" style={{ color: '#e60000' }}>👤 Отримувач</h6>
+                <div className="nova-poshta-form__panel">
+                  <h6 className="nova-poshta-form__panel-title"><span aria-hidden="true">👤</span> Отримувач</h6>
                   <div className="mb-3">
                     <label className="form-label">Тип отримувача</label>
                     <select 
@@ -243,8 +250,8 @@ function NovaPoshtaForm({ form, setForm, isEditing, apiNovaPoshta }) {
 
               {/* Доставка */}
               <div className="col-md-6">
-                <div className="border rounded p-3" style={{ backgroundColor: '#f8f9fa' }}>
-                  <h6 className="mb-3" style={{ color: '#e60000' }}>📦 Доставка</h6>
+                <div className="nova-poshta-form__panel">
+                  <h6 className="nova-poshta-form__panel-title"><span aria-hidden="true">📦</span> Доставка</h6>
                   <div className="mb-3">
                     <label className="form-label">Тип доставки</label>
                     <select 
@@ -321,28 +328,31 @@ function NovaPoshtaForm({ form, setForm, isEditing, apiNovaPoshta }) {
                             disabled={!isEditing}
                           />
                         )}
-                        <select 
-                          className="form-control" 
-                          name="npD_Branch" 
-                          value={form?.npD_Branch || ""} 
+                        <select
+                          className="form-control"
+                          name="npD_Branch"
+                          value={form?.npD_Branch || ""}
                           onChange={(e) => {
-                            handleChange(e);
+                            const selectedBranch = e.target.value;
+                            setForm(previous => ({ ...previous, npD_Branch: selectedBranch }));
                             setWarehouseSearchTerm("");
                           }}
                           disabled={!isEditing || !form?.npD_City || npWarehouses.length === 0}
-                          size={npWarehouses.length > 0 ? "8" : "1"}
                         >
                           <option value="">Оберіть відділення</option>
                           {npWarehouses
-                            .filter(warehouse => 
-                              warehouse.Description.toLowerCase().includes(warehouseSearchTerm.toLowerCase())
-                            )
+                            .filter(warehouse => (warehouse.Description || "").toLowerCase().includes(warehouseSearchTerm.toLowerCase()))
                             .map(warehouse => (
-                              <option key={warehouse.Ref} value={warehouse.Description}>
+                              <option key={warehouse.Ref} value={warehouse.Description || ""}>
                                 {warehouse.Description}
                               </option>
                             ))}
                         </select>
+                        {form?.npD_Branch && (
+                          <small className="d-block mt-2 text-success">
+                            Обране відділення: {form.npD_Branch}
+                          </small>
+                        )}
                         {form?.npD_City && npWarehouses.length === 0 && !loadingWarehouses && (
                           <small className="text-muted">Відділень не знайдено в цьому місті</small>
                         )}
@@ -513,6 +523,7 @@ function NovaPoshtaForm({ form, setForm, isEditing, apiNovaPoshta }) {
         </div>
       </div>
     </div>
+  </section>
   );
 }
 

@@ -1,19 +1,8 @@
 import { useState, useEffect } from "react";
 import { useCompany } from "../context/CompanyContext";
 import { useApi } from "../context/ApiContext";
-
-const currencies = [
-  { code: 0, name: "UAH - Українська гривня" },
-  { code: 1, name: "USD - Долар США" },
-  { code: 2, name: "EUR - Євро" },
-  { code: 3, name: "PLN - Злотий" },
-  { code: 4, name: "GBP - Фунт стерлінгів" }
-];
-
-const accountTypes = [
-  { value: 0, name: "Гривневий" },
-  { value: 1, name: "Валютний" }
-];
+import { useToast } from "../context/useToast";
+import { accountTypes, currencies, UAH_CURRENCY_CODE } from "../constants/bankDetails";
 
 function Section({ title, children }) {
   return (
@@ -34,6 +23,7 @@ const positionTypes = [
 ];
 
 function CompanySettingsPage({ setActiveSection }) {
+  const { pushToast } = useToast();
   const { companyId, setCompanyId } = useCompany();
   const { apiData } = useApi();
   const API_URL = `${apiData}/company`;
@@ -51,7 +41,6 @@ function CompanySettingsPage({ setActiveSection }) {
   const [npCities, setNpCities] = useState([]);
   const [npWarehouses, setNpWarehouses] = useState([]);
   const [citySearch, setCitySearch] = useState("");
-  const [selectedCityRef, setSelectedCityRef] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -119,7 +108,7 @@ function CompanySettingsPage({ setActiveSection }) {
     bankDetails: [
       {
         typeAccount: 0,
-        currency: 0,
+        currency: UAH_CURRENCY_CODE,
         bankName: "",
         bankMfo: "",
         iban: "",
@@ -151,8 +140,7 @@ function CompanySettingsPage({ setActiveSection }) {
           newBankDetails[index] = {
             ...newBankDetails[index],
             typeAccount: 0,
-            currency: 0,
-            iban: "",
+            currency: UAH_CURRENCY_CODE,
             swift: "",
             bankOfBeneficiary: "",
             correspondentBanks: []
@@ -206,7 +194,7 @@ function CompanySettingsPage({ setActiveSection }) {
         ...prev.bankDetails,
         {
           typeAccount: 0,
-          currency: 0,
+          currency: UAH_CURRENCY_CODE,
           bankName: "",
           bankMfo: "",
           iban: "",
@@ -220,7 +208,7 @@ function CompanySettingsPage({ setActiveSection }) {
 
   const removeBankAccount = (index) => {
     if (form.bankDetails.length === 1) {
-      alert("Має залишитись хоча б один банківський рахунок");
+      pushToast("Має залишитись хоча б один банківський рахунок", "warning");
       return;
     }
     setForm(prev => ({
@@ -236,7 +224,7 @@ function CompanySettingsPage({ setActiveSection }) {
 
   const addPerson = () => {
     if (!newPerson.fullName.trim()) {
-      alert("Введіть ім'я працівника");
+      pushToast("Введіть ім'я працівника", "warning");
       return;
     }
     
@@ -250,7 +238,7 @@ function CompanySettingsPage({ setActiveSection }) {
 
   const handleSubmit = async () => {
     if (!form.name || !form.codeCompany) {
-      alert("Заповніть обов'язкові поля: Назва компанії та ЄДРПОУ");
+      pushToast("Заповніть обов'язкові поля: Назва компанії та ЄДРПОУ", "warning");
       return;
     }
 
@@ -308,11 +296,11 @@ function CompanySettingsPage({ setActiveSection }) {
       }
       
       setCompanyId(newCompanyId);
-      alert("Компанію успішно створено!");
+      pushToast("Компанію успішно створено!", "success");
       setActiveSection("mycompany");
     } catch (err) {
       console.error("Помилка створення компанії:", err);
-      alert("Помилка створення компанії");
+      pushToast("Помилка створення компанії", "error");
     }
   };
 
@@ -338,14 +326,14 @@ function CompanySettingsPage({ setActiveSection }) {
           nP_OwnershipForm: json.ownershipForm || prev.nP_OwnershipForm
         }));
         
-        alert("✅ Компанію знайдено в Новій Пошті");
+        pushToast("✅ Компанію знайдено в Новій Пошті", "success");
       } catch (error) {
         console.error("Помилка пошуку компанії:", error);
       }
     }, 600);
 
     return () => clearTimeout(timeout);
-  }, [form?.nP_EdrpouCode, form?.apiNovaPoshtaKey]);
+  }, [form?.nP_EdrpouCode, form?.apiNovaPoshtaKey, pushToast]);
 
   // Пошук міст (autocomplete)
   useEffect(() => {
@@ -368,7 +356,7 @@ function CompanySettingsPage({ setActiveSection }) {
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [citySearch, form?.apiNovaPoshtaKey]);
+  }, [citySearch, form?.apiNovaPoshtaKey, apiData]);
 
   // Завантаження відділень/поштоматів
   const loadWarehouses = async (cityRef, deliveryType = null) => {
@@ -483,7 +471,7 @@ function CompanySettingsPage({ setActiveSection }) {
                     <input className="form-control" name="phoneNumber" value={newPerson.phoneNumber} onChange={handlePersonChange} placeholder="+380..." />
                   </div>
                   <div className="mb-2">
-                    <label className="form-label">Email</label>
+                    <label className="form-label">Електронна пошта</label>
                     <input className="form-control" type="email" name="email" value={newPerson.email} onChange={handlePersonChange} placeholder="email@example.com" />
                   </div>
                   <button className="btn btn-success btn-sm w-100" onClick={addPerson}>+ Додати працівника</button>
@@ -505,7 +493,7 @@ function CompanySettingsPage({ setActiveSection }) {
                 <input className="form-control" name="phoneNumber" onChange={handleChange} placeholder="+380..." />
               </div>
               <div className="mb-2">
-                <label className="form-label">Email</label>
+                <label className="form-label">Електронна пошта</label>
                 <input className="form-control" type="email" name="email" onChange={handleChange} placeholder="email@example.com" />
               </div>
               <div className="mb-0">
@@ -739,7 +727,6 @@ function CompanySettingsPage({ setActiveSection }) {
                                   onClick={() => {
                                     setForm(f => ({ ...f, npD_City: city.Present }));
                                     loadWarehouses(city.Ref, "0");
-                                    setSelectedCityRef(city.Ref);
                                     setCitySearch(city.Present);
                                     setNpCities([]);
                                   }}
@@ -832,7 +819,6 @@ function CompanySettingsPage({ setActiveSection }) {
                                   onClick={() => {
                                     setForm(f => ({ ...f, npD_City: city.Present }));
                                     loadWarehouses(city.Ref, "2");
-                                    setSelectedCityRef(city.Ref);
                                     setCitySearch(city.Present);
                                     setNpCities([]);
                                   }}
@@ -925,7 +911,7 @@ function CompanySettingsPage({ setActiveSection }) {
                         <p className="mb-1"><strong>Валюта:</strong> 
                           <select className="form-control d-inline-block w-50 ms-2" value={bank.currency} onChange={(e) => handleBankChange(index, 'currency', parseInt(e.target.value))} disabled={bank.typeAccount === 0}>
                             {bank.typeAccount === 0 ? (
-                              <option value={0}>{currencies.find(c => c.code === 0).name}</option>
+                              <option value={UAH_CURRENCY_CODE}>{currencies.find(c => c.code === UAH_CURRENCY_CODE).name}</option>
                             ) : (
                               currencies.map(curr => (
                                 <option key={curr.code} value={curr.code}>{curr.name}</option>
@@ -937,7 +923,10 @@ function CompanySettingsPage({ setActiveSection }) {
                         <p className="mb-1"><strong>Банк:</strong> <input className="form-control d-inline-block w-75" value={bank.bankName || ""} onChange={(e) => handleBankChange(index, 'bankName', e.target.value)} /></p>
 
                         {bank.typeAccount === 0 ? (
-                          <p className="mb-1"><strong>МФО:</strong> <input className="form-control d-inline-block w-75" value={bank.bankMfo || ""} onChange={(e) => handleBankChange(index, 'bankMfo', e.target.value)} /></p>
+                          <>
+                            <p className="mb-1"><strong>IBAN:</strong> <input className="form-control d-inline-block w-75" value={bank.iban || ""} onChange={(e) => handleBankChange(index, 'iban', e.target.value)} /></p>
+                            <p className="mb-1"><strong>МФО:</strong> <input className="form-control d-inline-block w-75" value={bank.bankMfo || ""} onChange={(e) => handleBankChange(index, 'bankMfo', e.target.value)} /></p>
+                          </>
                         ) : (
                           <>
                             <p className="mb-1"><strong>МФО:</strong> <input className="form-control d-inline-block w-75" value={bank.bankMfo || ""} onChange={(e) => handleBankChange(index, 'bankMfo', e.target.value)} /></p>

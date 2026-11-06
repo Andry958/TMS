@@ -1,8 +1,10 @@
-﻿using BusinessLogic.DTOs;
+using BusinessLogic.DTOs;
 using DataAccess.Data;
 using DataAccess.Data.Entities;
 using DataAccess.Data.Enum;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,18 +12,29 @@ namespace TMS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CompanyController : ControllerBase
     {
         private readonly TMSDbContext ctx;
-        public CompanyController(TMSDbContext ctx)
+        private readonly UserManager<User> userManager;
+
+        public CompanyController(TMSDbContext ctx, UserManager<User> userManager)
         {
             this.ctx = ctx;
+            this.userManager = userManager;
         }
 
         [HttpGet]
-        public IActionResult GetCompanies()
+        public async Task<IActionResult> GetCompanies()
         {
+            var currentUser = await userManager.GetUserAsync(User);
+            if (currentUser?.CompanyId is not int companyId)
+            {
+                return Ok(Array.Empty<object>());
+            }
+
             var companies = ctx.Companies
+                .Where(c => c.Id == companyId)
                 .Include(c => c.Contact)
                 .Include(c => c.LegalAddress)
                 .Include(c => c.UkrPoshtaAddress)
@@ -38,8 +51,14 @@ namespace TMS.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetCompanyById(int id)
+        public async Task<IActionResult> GetCompanyById(int id)
         {
+            var currentUser = await userManager.GetUserAsync(User);
+            if (currentUser?.CompanyId != id)
+            {
+                return NotFound();
+            }
+
             var company = ctx.Companies
                 .Include(c => c.Contact)
                 .Include(c => c.LegalAddress)
@@ -167,8 +186,15 @@ namespace TMS.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCompany([FromBody] PostCompanyDTO dto)
+        public async Task<IActionResult> CreateCompany([FromBody] PostCompanyDTO dto)
         {
+            var currentUser = await userManager.GetUserAsync(User);
+            if (currentUser is null) return Unauthorized();
+            if (currentUser.CompanyId.HasValue)
+            {
+                return Conflict(new { message = "Для цього облікового запису компанію вже створено." });
+            }
+
             var newCompany = new Company
             {
                 Name = dto.Name,
@@ -278,13 +304,26 @@ namespace TMS.Controllers
             };
 
             ctx.Companies.Add(newCompany);
-            ctx.SaveChanges();
+            await ctx.SaveChangesAsync();
+
+            currentUser.CompanyId = newCompany.Id;
+            var updateResult = await userManager.UpdateAsync(currentUser);
+            if (!updateResult.Succeeded)
+            {
+                ctx.Companies.Remove(newCompany);
+                await ctx.SaveChangesAsync();
+                return Problem("Компанію створено, але не вдалося прив’язати її до облікового запису.", statusCode: StatusCodes.Status500InternalServerError);
+            }
+
             return CreatedAtAction(nameof(GetCompanyById), new { id = newCompany.Id }, MapToDto(newCompany));
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateCompany(int id, [FromBody] PostCompanyDTO dto)
+        public async Task<IActionResult> UpdateCompany(int id, [FromBody] PostCompanyDTO dto)
         {
+            var currentUser = await userManager.GetUserAsync(User);
+            if (currentUser?.CompanyId != id) return NotFound();
+
             var company = ctx.Companies
                 .Include(c => c.Contact)
                 .Include(c => c.LegalAddress)

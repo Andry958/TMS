@@ -175,7 +175,7 @@ function ClientContacts({ form, isEditing, onChange }) {
           )}
         </div>
         <div className="mb-2">
-          <label className="form-label fw-bold">Email</label>
+          <label className="form-label fw-bold">Електронна пошта</label>
           {isEditing ? (
             <input className="form-control" type="email" name="email" value={form.email || ""} onChange={onChange} />
           ) : (

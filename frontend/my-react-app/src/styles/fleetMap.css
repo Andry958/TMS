@@ -1,0 +1,1124 @@
+.fleet-map-page {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 64px);
+  height: calc(100dvh - 64px);
+  min-height: 420px;
+  overflow: hidden;
+  color: #1d2935;
+}
+
+.fleet-map-page__header {
+  position: absolute;
+  z-index: 500;
+  top: 16px;
+  right: 18px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.fleet-map-page__header > div,
+.fleet-map-page__refresh {
+  pointer-events: auto;
+}
+
+.fleet-map-page__header > div:first-child {
+  max-width: min(430px, 55vw);
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(226, 232, 237, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(28, 48, 68, 0.14);
+  backdrop-filter: blur(8px);
+}
+
+.fleet-map-page__header h1 {
+  margin: 2px 0;
+  color: #182633;
+  font-size: clamp(20px, 2.4vw, 27px);
+  font-weight: 700;
+}
+
+.fleet-map-page__header p {
+  margin: 0;
+  color: #6a7884;
+  font-size: 13px;
+}
+
+.fleet-map-page__eyebrow {
+  color: #397fc7;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fleet-map-page__refresh {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 14px;
+  color: #687682;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(226, 232, 237, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(28, 48, 68, 0.14);
+  backdrop-filter: blur(8px);
+}
+
+.fleet-map-page__refresh button {
+  min-height: 40px;
+  padding: 0 16px;
+  color: #fff;
+  font-weight: 600;
+  background: #397fc7;
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.fleet-map-page__refresh button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.fleet-map-page__error {
+  position: absolute;
+  z-index: 600;
+  top: 94px;
+  right: 18px;
+  left: 18px;
+  padding: 12px 16px;
+  color: #843a30;
+  background: #fff0ed;
+  border: 1px solid #f1c3bb;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(28, 48, 68, 0.14);
+}
+
+.fleet-map-page__stats {
+  position: absolute;
+  z-index: 500;
+  top: 96px;
+  right: 18px;
+  display: flex;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.fleet-map-page__stats article {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 8px 11px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(226, 232, 237, 0.9);
+  border-radius: 9px;
+  box-shadow: 0 3px 12px rgba(28, 48, 68, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.fleet-map-page__stats article span {
+  color: #687682;
+  font-size: 12px;
+}
+
+.fleet-map-page__stats article strong {
+  color: #1d2935;
+  font-size: 17px;
+}
+
+.fleet-map-page__workspace {
+  position: absolute;
+  inset: 0;
+}
+
+.fleet-map-page__sidebar {
+  position: absolute;
+  z-index: 500;
+  top: 158px;
+  bottom: 18px;
+  left: 18px;
+  display: flex;
+  flex-direction: column;
+  width: min(286px, calc(100% - 36px));
+  min-height: 0;
+  padding: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(226, 232, 237, 0.95);
+  border-radius: 13px;
+  box-shadow: 0 5px 22px rgba(28, 48, 68, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.fleet-map-page__search input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  color: #263644;
+  background: #f7f9fb;
+  border: 1px solid #e1e7ec;
+  border-radius: 8px;
+  outline-color: #397fc7;
+}
+
+.fleet-map-page__filters {
+  display: flex;
+  gap: 5px;
+  margin: 12px 0;
+  padding: 4px;
+  background: #f1f4f6;
+  border-radius: 8px;
+}
+
+.fleet-map-page__filters button {
+  flex: 1;
+  padding: 7px 5px;
+  color: #62717d;
+  font-size: 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.fleet-map-page__filters button.is-active {
+  color: #1d568a;
+  font-weight: 700;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(21, 39, 55, 0.12);
+}
+
+.fleet-map-page__vehicle-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.fleet-map-page__vehicle-list li {
+  padding: 0;
+  border-bottom: 1px solid #eef1f3;
+}
+
+.fleet-map-page__vehicle {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 12px 8px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.fleet-map-page__vehicle:hover,
+.fleet-map-page__vehicle.is-selected {
+  background: #f0f6fc;
+}
+
+.fleet-map-page__vehicle-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.fleet-map-page__vehicle-list strong {
+  overflow: hidden;
+  color: #253644;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fleet-map-page__vehicle-info > span,
+.fleet-map-page__vehicle-info small {
+  color: #73818b;
+  font-size: 12px;
+}
+
+.fleet-map-page__vehicle-action {
+  color: #7e8b96;
+  font-size: 16px;
+}
+
+.fleet-map-page__status,
+.fleet-map-page__legend i {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  margin-top: 4px;
+  background: #ef6a5b;
+  border-radius: 50%;
+}
+
+.fleet-map-page__status.is-online,
+.fleet-map-page__legend i.is-online {
+  background: #24a46c;
+}
+
+.fleet-map-page__empty,
+.fleet-map-page__footnote {
+  margin: 12px 4px;
+  color: #77848e;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.fleet-map-page__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding-top: 12px;
+  color: #75828c;
+  font-size: 11px;
+}
+
+.fleet-map-page__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fleet-map-page__legend i {
+  width: 7px;
+  height: 7px;
+  flex-basis: 7px;
+  margin: 0;
+}
+
+.fleet-map-page__map {
+  position: absolute;
+  inset: 0;
+  background: #e7edf0;
+}
+
+.fleet-map-page__google-map {
+  width: 100%;
+  height: 100%;
+}
+
+.fleet-map-page__map-message {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: min(480px, calc(100% - 32px));
+  padding: 16px 18px;
+  color: #843a30;
+  text-align: center;
+  background: rgba(255, 240, 237, 0.97);
+  border: 1px solid #f1c3bb;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(28, 48, 68, 0.14);
+  transform: translate(-50%, -50%);
+}
+
+.fleet-map__popup {
+  display: flex;
+  min-width: 170px;
+  flex-direction: column;
+  gap: 4px;
+  color: #465661;
+  font-size: 12px;
+}
+
+.fleet-map__popup strong {
+  margin-bottom: 3px;
+  color: #1d2935;
+  font-size: 14px;
+}
+
+.fleet-map-page__details-panel {
+  position: absolute;
+  z-index: 550;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 9px 14px 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(217, 226, 233, 0.98);
+  border-radius: 13px;
+  box-shadow: 0 6px 26px rgba(28, 48, 68, 0.22);
+  backdrop-filter: blur(10px);
+}
+
+.fleet-map-page__resize-handle {
+  position: relative;
+  width: 62px;
+  height: 8px;
+  flex: 0 0 8px;
+  align-self: center;
+  padding: 0;
+  background: #d7dfe5;
+  border: 0;
+  border-radius: 8px;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.fleet-map-page__resize-handle:hover {
+  background: #9caeba;
+}
+
+.fleet-map-page__details-header,
+.fleet-map-page__details-vehicle,
+.fleet-map-page__details-actions {
+  display: flex;
+  align-items: center;
+}
+
+.fleet-map-page__details-header {
+  min-height: 34px;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fleet-map-page__details-vehicle {
+  min-width: 0;
+  gap: 10px;
+}
+
+.fleet-map-page__details-vehicle > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fleet-map-page__details-vehicle strong {
+  overflow: hidden;
+  color: #1d2935;
+  font-size: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fleet-map-page__details-vehicle span:not(.fleet-map-page__status) {
+  overflow: hidden;
+  color: #74818c;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fleet-map-page__details-actions {
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.fleet-map-page__range-presets,
+.fleet-map-page__metric-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fleet-map-page__range-presets {
+  padding: 3px;
+  background: #f1f4f6;
+  border-radius: 7px;
+}
+
+.fleet-map-page__range-presets button,
+.fleet-map-page__metric-tabs button {
+  padding: 5px 9px;
+  color: #657581;
+  font-size: 11px;
+  white-space: nowrap;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.fleet-map-page__range-presets button.is-active,
+.fleet-map-page__metric-tabs button.is-active {
+  color: #1d568a;
+  font-weight: 700;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(21, 39, 55, 0.14);
+}
+
+.fleet-map-page__range-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  min-height: 30px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #edf0f2;
+}
+
+.fleet-map-page__range-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #73818b;
+  font-size: 10px;
+}
+
+.fleet-map-page__range-controls input {
+  width: 190px;
+  min-height: 28px;
+  padding: 3px 6px;
+  color: #3d4f5c;
+  font: inherit;
+  font-size: 11px;
+  background: #f8fafb;
+  border: 1px solid #e1e7ec;
+  border-radius: 6px;
+}
+
+.fleet-map-page__range-apply {
+  min-height: 28px;
+  padding: 0 12px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 650;
+  background: #397fc7;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.fleet-map-page__panel-error {
+  margin: 0;
+  color: #a44538;
+  font-size: 10px;
+}
+
+.fleet-map-page__detail-tabs {
+  display: flex;
+  min-height: 31px;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  border-bottom: 1px solid #e8edf0;
+}
+
+.fleet-map-page__detail-tabs > button {
+  height: 30px;
+  padding: 0 11px;
+  color: #70808c;
+  font-size: 11px;
+  white-space: nowrap;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.fleet-map-page__detail-tabs > button.is-active {
+  color: #276da8;
+  font-weight: 700;
+  border-bottom-color: #397fc7;
+}
+
+.fleet-map-page__detail-tabs .fleet-map-page__metric-tabs {
+  margin-left: auto;
+}
+
+.fleet-map-page__details-close {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  color: #63727d;
+  font-size: 23px;
+  line-height: 1;
+  background: #f1f4f6;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.fleet-map-page__telemetry-summary {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.fleet-map-page__telemetry-summary article {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 9px;
+  background: #f7f9fb;
+  border: 1px solid #edf0f2;
+  border-radius: 7px;
+}
+
+.fleet-map-page__telemetry-summary span {
+  overflow: hidden;
+  color: #80909b;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fleet-map-page__telemetry-summary strong {
+  overflow: hidden;
+  color: #344653;
+  font-size: 12px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fleet-map-page__details-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.fleet-map-page__sensor-list {
+  display: flex;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-width: 0;
+  padding: 4px 0;
+  overflow: auto;
+}
+
+.fleet-map-page__sensor-list--expanded {
+  flex: 1;
+}
+
+.fleet-map-page__sensor-list > span:not(.fleet-map-page__no-sensors) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: fit-content;
+  padding: 5px 8px;
+  color: #667681;
+  font-size: 10px;
+  background: #f8fafb;
+  border: 1px solid #e5eaee;
+  border-radius: 15px;
+}
+
+.fleet-map-page__sensor-list i {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  background: #498bc5;
+  border-radius: 50%;
+}
+
+.fleet-map-page__sensor-list strong {
+  color: #2e4351;
+  font-weight: 650;
+}
+
+.fleet-map-page__no-sensors,
+.fleet-map-page__chart-empty {
+  margin: 4px 0;
+  color: #83909a;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.fleet-map-page__history {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.fleet-map-page__chart-toolbar {
+  display: flex;
+  min-height: 27px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fleet-map-page__chart-toolbar > strong {
+  color: #5e6e79;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.fleet-map-page__playback-summary {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 2px 4px 7px;
+  border-bottom: 1px solid #e8eef0;
+}
+
+.fleet-map-page__playback-vehicle {
+  display: flex;
+  min-width: 170px;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fleet-map-page__playback-vehicle strong {
+  overflow: hidden;
+  color: #1e2a33;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fleet-map-page__playback-vehicle span,
+.fleet-map-page__playback-stats > span {
+  color: #71808a;
+  font-size: 10px;
+}
+
+.fleet-map-page__playback-stats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.fleet-map-page__playback-stats > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.fleet-map-page__playback-stats strong {
+  color: #394b56;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.fleet-map-page__playback-controls {
+  display: flex;
+  min-height: 31px;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 2px 0;
+}
+
+.fleet-map-page__playback-controls button {
+  width: 26px;
+  height: 24px;
+  padding: 0;
+  color: #4d5c67;
+  font-size: 11px;
+  background: #f2f6f7;
+  border: 1px solid #e0e8eb;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.fleet-map-page__playback-controls button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.fleet-map-page__playback-controls button:nth-child(2) {
+  color: #fff;
+  background: #386ff1;
+  border-color: #386ff1;
+}
+
+.fleet-map-page__playback-speed {
+  margin: 0 5px;
+  color: #586772;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 650;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.fleet-map-page__playback-controls > strong {
+  color: #4c5c67;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.fleet-map-page__playback-current {
+  margin-left: auto;
+  color: #82909a;
+  font-size: 10px;
+}
+
+.fleet-map-page__timeline {
+  padding: 1px 4px 4px;
+}
+
+.fleet-map-page__timeline input {
+  display: block;
+  width: 100%;
+  height: 14px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fleet-map-page__timeline input::-webkit-slider-runnable-track {
+  height: 2px;
+  background: linear-gradient(to right, #f04b4d var(--timeline-progress), #d7e0e4 var(--timeline-progress));
+}
+
+.fleet-map-page__timeline input::-moz-range-track {
+  height: 2px;
+  background: #d7e0e4;
+}
+
+.fleet-map-page__timeline input::-moz-range-progress {
+  height: 2px;
+  background: #f04b4d;
+}
+
+.fleet-map-page__timeline input::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+  margin-top: -5px;
+  appearance: none;
+  background: #fff;
+  border: 2px solid #386ff1;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px #64717b66;
+}
+
+.fleet-map-page__timeline input::-moz-range-thumb {
+  width: 9px;
+  height: 9px;
+  background: #fff;
+  border: 2px solid #386ff1;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px #64717b66;
+}
+
+.fleet-map-page__timeline input:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.fleet-map-page__timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #77858e;
+  font-size: 9px;
+}
+
+.fleet-map-page__route-metrics {
+  display: flex;
+  min-height: 25px;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.fleet-map-page__route-metrics button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  color: #52616c;
+  font-size: 9px;
+  white-space: nowrap;
+  background: #f7f9fa;
+  border: 1px solid #dce4e8;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.fleet-map-page__route-metrics button.is-active {
+  color: #b66712;
+  background: #fff8e8;
+  border-color: #e9a33d;
+}
+
+.fleet-map-page__route-metrics i {
+  width: 6px;
+  height: 6px;
+  background: #4381ef;
+  border-radius: 50%;
+}
+
+.fleet-map-page__route-metrics button.is-active i {
+  background: #f08b14;
+}
+
+.fleet-map-page__metric-tabs {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.fleet-map-page__metric-tabs button {
+  padding: 4px 7px;
+}
+
+.fleet-map-page__chart-wrap {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 3px 0 0 36px;
+}
+
+.fleet-map-page__chart-values,
+.fleet-map-page__chart-time {
+  display: flex;
+  justify-content: space-between;
+  color: #8b98a1;
+  font-size: 9px;
+}
+
+.fleet-map-page__chart-values {
+  position: absolute;
+  top: 4px;
+  bottom: 18px;
+  left: 0;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.fleet-map-page__chart {
+  width: 100%;
+  flex: 1;
+  min-height: 55px;
+  overflow: visible;
+}
+
+.fleet-map-page__chart line {
+  stroke: #e8edf0;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.fleet-map-page__chart path {
+  fill: none;
+  stroke: #ef8b21;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.fleet-map-page__chart-time {
+  gap: 12px;
+  padding-top: 3px;
+}
+
+@media (max-width: 850px) {
+  .fleet-map-page__sidebar {
+    width: min(260px, calc(100% - 36px));
+  }
+}
+
+@media (max-width: 640px) {
+  .fleet-map-page {
+    height: calc(100vh - 58px);
+    height: calc(100dvh - 58px);
+  }
+
+  .fleet-map-page__header {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    align-items: flex-start;
+  }
+
+  .fleet-map-page__header > div:first-child {
+    max-width: calc(100% - 120px);
+    padding: 9px 11px;
+  }
+
+  .fleet-map-page__header p {
+    display: none;
+  }
+
+  .fleet-map-page__refresh {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+    padding: 7px;
+    font-size: 10px;
+  }
+
+  .fleet-map-page__refresh button {
+    min-height: 34px;
+    padding: 0 9px;
+    font-size: 12px;
+  }
+
+  .fleet-map-page__stats {
+    top: 84px;
+    right: 10px;
+    left: 10px;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .fleet-map-page__stats article {
+    gap: 4px;
+    padding: 6px 8px;
+  }
+
+  .fleet-map-page__sidebar {
+    top: auto;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    width: auto;
+    max-height: 35%;
+    padding: 10px;
+  }
+
+  .fleet-map-page__sidebar.has-selected-device {
+    max-height: 30%;
+  }
+
+  .fleet-map-page__details-panel {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    min-height: 200px;
+    gap: 7px;
+    padding: 9px;
+  }
+
+  .fleet-map-page__details-header {
+    gap: 5px;
+  }
+
+  .fleet-map-page__details-vehicle {
+    gap: 6px;
+  }
+
+  .fleet-map-page__details-vehicle strong {
+    font-size: 13px;
+  }
+
+  .fleet-map-page__details-vehicle span:not(.fleet-map-page__status) {
+    max-width: 38vw;
+    font-size: 10px;
+  }
+
+  .fleet-map-page__details-actions {
+    gap: 4px;
+  }
+
+  .fleet-map-page__range-controls {
+    gap: 5px;
+  }
+
+  .fleet-map-page__range-controls label {
+    flex: 1;
+    min-width: 125px;
+  }
+
+  .fleet-map-page__range-controls input {
+    width: 100%;
+    min-width: 0;
+    font-size: 10px;
+  }
+
+  .fleet-map-page__range-presets button {
+    padding: 5px 6px;
+    font-size: 10px;
+  }
+
+  .fleet-map-page__details-close {
+    width: 26px;
+    height: 26px;
+  }
+
+  .fleet-map-page__telemetry-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .fleet-map-page__telemetry-summary article {
+    padding: 4px 6px;
+  }
+
+  .fleet-map-page__telemetry-summary span {
+    font-size: 9px;
+  }
+
+  .fleet-map-page__telemetry-summary strong {
+    font-size: 10px;
+  }
+
+  .fleet-map-page__sensor-list {
+    max-height: 100%;
+  }
+
+  .fleet-map-page__chart-toolbar > strong {
+    font-size: 10px;
+  }
+
+  .fleet-map-page__playback-summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    padding-bottom: 5px;
+  }
+
+  .fleet-map-page__playback-stats {
+    width: 100%;
+    gap: 9px;
+    overflow-x: auto;
+  }
+
+  .fleet-map-page__playback-stats > span,
+  .fleet-map-page__playback-stats strong {
+    font-size: 9px;
+  }
+
+  .fleet-map-page__timeline-labels {
+    font-size: 8px;
+  }
+
+  .fleet-map-page__route-metrics button {
+    padding: 4px 6px;
+    font-size: 8px;
+  }
+
+  .fleet-map-page__metric-tabs button {
+    padding: 4px 5px;
+    font-size: 9px;
+  }
+
+  .fleet-map-page__vehicle-list li {
+    padding: 8px 5px;
+  }
+
+  .fleet-map-page__error {
+    top: 132px;
+    right: 10px;
+    left: 10px;
+  }
+}

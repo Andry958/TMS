@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../context/ApiContext";
 import { useCompany } from "../context/CompanyContext";
+import { useToast } from "../context/useToast";
 
 function ClientsPage() {
+  const { pushToast } = useToast();
    const { companyId } = useCompany();
   
   const { apiData } = useApi();
@@ -40,7 +42,7 @@ function ClientsPage() {
       setClients(data);
     } catch (error) {
       console.error("Error fetching clients:", error);
-      alert("Помилка завантаження клієнтів");
+      pushToast("Помилка завантаження клієнтів", "error");
     } finally {
       setLoading(false);
     }
@@ -145,8 +147,8 @@ function ClientsPage() {
   }
 
   return (
-    <div className="container-fluid mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+    <div className="container-fluid mt-4 page-shell">
+      <div className="page-title-bar d-flex justify-content-between align-items-center mb-4">
         <h2>Клієнти компанії</h2>
         <button 
           className="btn btn-primary"

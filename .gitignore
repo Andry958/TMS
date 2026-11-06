@@ -164,6 +164,7 @@ certs/
 
 # API Keys (якщо зберігаються локально)
 appsettings.Development.json
+backend/TMS/appsettings.Local.json
 # appsettings.json # Розкоментуйте, якщо не хочете комітити
 
 # User-specific files

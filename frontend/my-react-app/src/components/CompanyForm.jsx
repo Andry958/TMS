@@ -84,7 +84,7 @@ export default function CompanyForm(props) {
               <input id="phoneNumber" className="form-control" name="phoneNumber" value={form.phoneNumber || ""} onChange={handleChange} autoComplete="tel" />
             </div>
             <div className="mb-2">
-              <label htmlFor="email" className="form-label">Email</label>
+              <label htmlFor="email" className="form-label">Електронна пошта</label>
               <input id="email" type="email" className="form-control" name="email" value={form.email || ""} onChange={handleChange} autoComplete="email" />
             </div>
             <div className="mb-2">

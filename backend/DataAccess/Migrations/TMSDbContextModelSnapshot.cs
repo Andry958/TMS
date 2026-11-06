@@ -61,6 +61,219 @@ namespace DataAccess.Migrations
                     b.ToTable("BankDetails");
                 });
 
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompany", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalInfo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CodeCompany")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CompanyType")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Ipn")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LogoPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("NPD_AddressComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NPD_Apartment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NPD_Branch")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NPD_Building")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NPD_City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NPD_DigitalAddressReference")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NPD_PostomatNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NPD_Street")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_EdrpouCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_MiddleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_OrgFirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_OrgLastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_OrgMiddleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_OrgPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_OwnershipForm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NP_Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("NovaPoshtaDeliveryType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NovaPoshtaRecipientType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ParentCompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TaxSystem")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentCompanyId");
+
+                    b.ToTable("ClientCompanies");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompanyBankDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BankMfo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankOfBeneficiary")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ClientCompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Iban")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Swift")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TypeAccount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientCompanyId");
+
+                    b.ToTable("ClientCompanyBankDetails");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompanyContact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientCompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("Position")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientCompanyId");
+
+                    b.ToTable("ClientCompanyContacts");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompanyCorrespondentBank", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ClientCompanyBankDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Swift")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientCompanyBankDetailsId");
+
+                    b.ToTable("ClientCompanyCorrespondentBanks");
+                });
+
             modelBuilder.Entity("DataAccess.Data.Entities.Company", b =>
                 {
                     b.Property<int>("Id")
@@ -98,6 +311,664 @@ namespace DataAccess.Migrations
                     b.HasIndex("ParentCompanyId");
 
                     b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.CompanyDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("IssueDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Owner")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("CompanyId", "ExpiryDate");
+
+                    b.ToTable("CompanyDocuments");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.CompanyDocumentFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyDocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageFileName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyDocumentId");
+
+                    b.ToTable("CompanyDocumentFiles");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Driver", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalContact")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId", "IsArchived");
+
+                    b.HasIndex("Id", "CompanyId")
+                        .IsUnique();
+
+                    b.ToTable("Drivers");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.DriverDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("DriverId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("IssueDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Number")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.ToTable("DriverDocuments");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.DriverDocumentFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<int>("DriverDocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageFileName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverDocumentId");
+
+                    b.ToTable("DriverDocumentFiles");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FinanceEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("CompanyId", "Date");
+
+                    b.ToTable("FinanceEntries");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FleetVehicle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("AdblueTankLitres")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<string>("AdrClass")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("BodyType")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("CanBusStatus")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<decimal?>("CapacityTons")
+                        .HasPrecision(12, 3)
+                        .HasColumnType("decimal(12,3)");
+
+                    b.Property<string>("CargoDimensions")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("ConsumptionLitresPer100Km")
+                        .HasPrecision(12, 3)
+                        .HasColumnType("decimal(12,3)");
+
+                    b.Property<string>("CostCurrency")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal?>("CostPerKm")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomsApproval")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Division")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("DoorHeight")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("DoubleDeck")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("EQueueProfile")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("Equipment")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("EuroClass")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Extras")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("FuelLevelLitres")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<decimal?>("FuelTankLitres")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<string>("GpsDeviceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("GpsProvider")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal?>("GrossWeightKg")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<decimal?>("HydraulicLiftCapacityKg")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<string>("LastGpsUpdate")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<decimal?>("LeaseCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("LeaseCurrency")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Lessor")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("Make")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("Mechanic")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<decimal?>("MileageKm")
+                        .HasPrecision(14, 1)
+                        .HasColumnType("decimal(14,1)");
+
+                    b.Property<DateTime?>("NextServiceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("NextServiceMileageKm")
+                        .HasPrecision(14, 1)
+                        .HasColumnType("decimal(14,1)");
+
+                    b.Property<string>("OwnershipDetails")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("OwnershipType")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int?>("PalletCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PlannedServiceWorks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Plate")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("RefrigerationType")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("RepairHistory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal?>("TareKg")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<string>("TemperatureRange")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TemperatureRecorder")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("TireAxles")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TireDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TireTread")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrailerPlate")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("TransitProfileId")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("TransitSystems")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Vin")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<decimal?>("VolumeM3")
+                        .HasPrecision(12, 3)
+                        .HasColumnType("decimal(12,3)");
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId", "Plate")
+                        .IsUnique();
+
+                    b.HasIndex("Id", "CompanyId")
+                        .IsUnique();
+
+                    b.ToTable("FleetVehicles");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FleetVehicleDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("IssueDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Number")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("FleetVehicleDocuments");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FleetVehicleDocumentFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageFileName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleDocumentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleDocumentId");
+
+                    b.ToTable("FleetVehicleDocumentFiles");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.GlobusTelemetryPoint", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<double?>("AltitudeMeters")
+                        .HasColumnType("float");
+
+                    b.Property<DateTimeOffset>("CollectedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("CourseDegrees")
+                        .HasColumnType("float");
+
+                    b.Property<string>("DeviceSerial")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool?>("IgnitionOn")
+                        .HasColumnType("bit");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<DateTimeOffset>("RecordedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("SensorsJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("SpeedKmh")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId", "DeviceSerial", "RecordedAtUtc")
+                        .IsUnique();
+
+                    b.ToTable("GlobusTelemetryPoints");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Peaple", b =>
@@ -197,6 +1068,421 @@ namespace DataAccess.Migrations
                     b.ToTable("Trackings");
                 });
 
+            modelBuilder.Entity("DataAccess.Data.Entities.TransportOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalManagerUserIds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CargoDescription")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ClientCompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ClientContactId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClientOrderNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContractNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("DeliveryAddress")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("DeliveryCity")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<DateOnly?>("DeliveryDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("FleetVehicleId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("InitialRate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("LoadingAddress")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("LoadingCity")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<DateOnly?>("LoadingDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ManagerUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateOnly>("OrderDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("PaymentDelayDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentTerms")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PreviousStatus")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int?>("SourceRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Tags")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("TripId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("VatRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("WeightTons")
+                        .HasPrecision(12, 3)
+                        .HasColumnType("decimal(12,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientCompanyId");
+
+                    b.HasIndex("ClientContactId");
+
+                    b.HasIndex("ManagerUserId");
+
+                    b.HasIndex("SourceRequestId")
+                        .IsUnique()
+                        .HasFilter("[SourceRequestId] IS NOT NULL");
+
+                    b.HasIndex("FleetVehicleId", "CompanyId");
+
+                    b.HasIndex("TripId", "CompanyId");
+
+                    b.HasIndex("CompanyId", "Status", "CreatedAt");
+
+                    b.ToTable("TransportOrders");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.TransportOrderDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageFileName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<int>("TransportOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransportOrderId");
+
+                    b.ToTable("TransportOrderDocuments");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.TransportRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CargoDescription")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ClientCompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("DeliveryAddress")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("DeliveryCity")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<DateOnly>("DeliveryDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("LoadingAddress")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("LoadingCity")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<DateOnly>("LoadingDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("PreviousStatus")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal?>("Rate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("WeightTons")
+                        .HasPrecision(12, 3)
+                        .HasColumnType("decimal(12,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientCompanyId");
+
+                    b.HasIndex("CompanyId", "Status", "CreatedAt");
+
+                    b.ToTable("TransportRequests");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Trip", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ActualEndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ActualStartAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DriverId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("EndOdometerKm")
+                        .HasPrecision(14, 1)
+                        .HasColumnType("decimal(14,1)");
+
+                    b.Property<decimal>("IssuedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("PlannedEndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PlannedStartAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("StartOdometerKm")
+                        .HasPrecision(14, 1)
+                        .HasColumnType("decimal(14,1)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId", "CompanyId");
+
+                    b.HasIndex("VehicleId", "CompanyId");
+
+                    b.HasIndex("CompanyId", "Status", "PlannedStartAt");
+
+                    b.ToTable("Trips");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.TripExpense", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("SpentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("TripExpenses");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.TripPoint", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime?>("ArrivalAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripId", "Order")
+                        .IsUnique();
+
+                    b.ToTable("TripPoints");
+                });
+
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -283,6 +1569,160 @@ namespace DataAccess.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.VehicleDriverAssignment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ChangeReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DriverId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId")
+                        .IsUnique()
+                        .HasFilter("[EndedAt] IS NULL");
+
+                    b.HasIndex("VehicleId")
+                        .IsUnique()
+                        .HasFilter("[EndedAt] IS NULL");
+
+                    b.HasIndex("DriverId", "CompanyId");
+
+                    b.HasIndex("VehicleId", "CompanyId");
+
+                    b.HasIndex("CompanyId", "VehicleId", "StartedAt");
+
+                    b.ToTable("VehicleDriverAssignments");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.WarehouseMovement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("CompanyId", "CreatedAt");
+
+                    b.ToTable("WarehouseMovements");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.WarehouseProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("MinimumQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("CompanyId", "Sku")
+                        .IsUnique()
+                        .HasFilter("[Sku] <> ''");
+
+                    b.ToTable("WarehouseProducts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -458,6 +1898,186 @@ namespace DataAccess.Migrations
                     b.Navigation("CorrespondentBanks");
                 });
 
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompany", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", "ParentCompany")
+                        .WithMany()
+                        .HasForeignKey("ParentCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("DataAccess.Data.Entities.Address", "ActualAddress", b1 =>
+                        {
+                            b1.Property<int>("ClientCompanyId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("ApartmentNumber")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("BuildingNumber")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Country")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Region")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("StreetAddress")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ClientCompanyId");
+
+                            b1.ToTable("ClientCompanies");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ClientCompanyId");
+                        });
+
+                    b.OwnsOne("DataAccess.Data.Entities.ContactInfo", "Contact", b1 =>
+                        {
+                            b1.Property<int>("ClientCompanyId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Email")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PhoneNumber")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Website")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ClientCompanyId");
+
+                            b1.ToTable("ClientCompanies");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ClientCompanyId");
+                        });
+
+                    b.OwnsOne("DataAccess.Data.Entities.Address", "LegalAddress", b1 =>
+                        {
+                            b1.Property<int>("ClientCompanyId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("ApartmentNumber")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("BuildingNumber")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Country")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Region")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("StreetAddress")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ClientCompanyId");
+
+                            b1.ToTable("ClientCompanies");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ClientCompanyId");
+                        });
+
+                    b.OwnsOne("DataAccess.Data.Entities.Address", "UkrPoshtaAddress", b1 =>
+                        {
+                            b1.Property<int>("ClientCompanyId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("ApartmentNumber")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("BuildingNumber")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Country")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Region")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("StreetAddress")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ClientCompanyId");
+
+                            b1.ToTable("ClientCompanies");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ClientCompanyId");
+                        });
+
+                    b.Navigation("ActualAddress")
+                        .IsRequired();
+
+                    b.Navigation("Contact")
+                        .IsRequired();
+
+                    b.Navigation("LegalAddress")
+                        .IsRequired();
+
+                    b.Navigation("ParentCompany");
+
+                    b.Navigation("UkrPoshtaAddress")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompanyBankDetails", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.ClientCompany", "ClientCompany")
+                        .WithMany("BankDetails")
+                        .HasForeignKey("ClientCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ClientCompany");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompanyContact", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.ClientCompany", "ClientCompany")
+                        .WithMany("ContactPeople")
+                        .HasForeignKey("ClientCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ClientCompany");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompanyCorrespondentBank", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.ClientCompanyBankDetails", "ClientCompanyBankDetails")
+                        .WithMany("CorrespondentBanks")
+                        .HasForeignKey("ClientCompanyBankDetailsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ClientCompanyBankDetails");
+                });
+
             modelBuilder.Entity("DataAccess.Data.Entities.Company", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.Company", "ParentCompany")
@@ -508,6 +2128,28 @@ namespace DataAccess.Migrations
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("StreetAddress")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CompanyId");
+
+                            b1.ToTable("Companies");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyId");
+                        });
+
+                    b.OwnsOne("DataAccess.Data.Entities.ContactInfo", "Contact", b1 =>
+                        {
+                            b1.Property<int>("CompanyId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Email")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PhoneNumber")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Website")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("CompanyId");
@@ -576,28 +2218,6 @@ namespace DataAccess.Migrations
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("StreetAddress")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("CompanyId");
-
-                            b1.ToTable("Companies");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CompanyId");
-                        });
-
-                    b.OwnsOne("DataAccess.Data.Entities.ContactInfo", "Contact", b1 =>
-                        {
-                            b1.Property<int>("CompanyId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Email")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("PhoneNumber")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Website")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("CompanyId");
@@ -729,6 +2349,122 @@ namespace DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("DataAccess.Data.Entities.CompanyDocument", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.CompanyDocumentFile", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.CompanyDocument", "Document")
+                        .WithMany("Files")
+                        .HasForeignKey("CompanyDocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Driver", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", "Company")
+                        .WithMany("Drivers")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.DriverDocument", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Driver", "Driver")
+                        .WithMany("Documents")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.DriverDocumentFile", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.DriverDocument", "DriverDocument")
+                        .WithMany("Files")
+                        .HasForeignKey("DriverDocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DriverDocument");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FinanceEntry", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FleetVehicle", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", "Company")
+                        .WithMany("FleetVehicles")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FleetVehicleDocument", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.FleetVehicle", "Vehicle")
+                        .WithMany("Documents")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FleetVehicleDocumentFile", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.FleetVehicleDocument", "VehicleDocument")
+                        .WithMany("Files")
+                        .HasForeignKey("VehicleDocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("VehicleDocument");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.GlobusTelemetryPoint", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("DataAccess.Data.Entities.Peaple", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.Company", "Company")
@@ -751,6 +2487,136 @@ namespace DataAccess.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("DataAccess.Data.Entities.TransportOrder", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.ClientCompany", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.ClientCompanyContact", "ClientContact")
+                        .WithMany()
+                        .HasForeignKey("ClientContactId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("ManagerUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.TransportRequest", "SourceRequest")
+                        .WithMany()
+                        .HasForeignKey("SourceRequestId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataAccess.Data.Entities.FleetVehicle", "FleetVehicle")
+                        .WithMany()
+                        .HasForeignKey("FleetVehicleId", "CompanyId")
+                        .HasPrincipalKey("Id", "CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DataAccess.Data.Entities.Trip", "Trip")
+                        .WithMany("Orders")
+                        .HasForeignKey("TripId", "CompanyId")
+                        .HasPrincipalKey("Id", "CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Client");
+
+                    b.Navigation("ClientContact");
+
+                    b.Navigation("FleetVehicle");
+
+                    b.Navigation("SourceRequest");
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.TransportOrderDocument", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.TransportOrder", "TransportOrder")
+                        .WithMany("Documents")
+                        .HasForeignKey("TransportOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TransportOrder");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.TransportRequest", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.ClientCompany", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Trip", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.Driver", "Driver")
+                        .WithMany("Trips")
+                        .HasForeignKey("DriverId", "CompanyId")
+                        .HasPrincipalKey("Id", "CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.FleetVehicle", "Vehicle")
+                        .WithMany("Trips")
+                        .HasForeignKey("VehicleId", "CompanyId")
+                        .HasPrincipalKey("Id", "CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.TripExpense", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Trip", "Trip")
+                        .WithMany("Expenses")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.TripPoint", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Trip", "Trip")
+                        .WithMany("Points")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+                });
+
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.Company", "Company")
@@ -758,6 +2624,71 @@ namespace DataAccess.Migrations
                         .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.VehicleDriverAssignment", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.Driver", "Driver")
+                        .WithMany("Assignments")
+                        .HasForeignKey("DriverId", "CompanyId")
+                        .HasPrincipalKey("Id", "CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.FleetVehicle", "Vehicle")
+                        .WithMany("Assignments")
+                        .HasForeignKey("VehicleId", "CompanyId")
+                        .HasPrincipalKey("Id", "CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.WarehouseMovement", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.WarehouseProduct", "Product")
+                        .WithMany("Movements")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.WarehouseProduct", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -811,6 +2742,18 @@ namespace DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompany", b =>
+                {
+                    b.Navigation("BankDetails");
+
+                    b.Navigation("ContactPeople");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.ClientCompanyBankDetails", b =>
+                {
+                    b.Navigation("CorrespondentBanks");
+                });
+
             modelBuilder.Entity("DataAccess.Data.Entities.Company", b =>
                 {
                     b.Navigation("BankDetails");
@@ -819,7 +2762,63 @@ namespace DataAccess.Migrations
 
                     b.Navigation("CompanyTrackings");
 
+                    b.Navigation("Drivers");
+
+                    b.Navigation("FleetVehicles");
+
                     b.Navigation("ManagementPeaple");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.CompanyDocument", b =>
+                {
+                    b.Navigation("Files");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Driver", b =>
+                {
+                    b.Navigation("Assignments");
+
+                    b.Navigation("Documents");
+
+                    b.Navigation("Trips");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.DriverDocument", b =>
+                {
+                    b.Navigation("Files");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FleetVehicle", b =>
+                {
+                    b.Navigation("Assignments");
+
+                    b.Navigation("Documents");
+
+                    b.Navigation("Trips");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.FleetVehicleDocument", b =>
+                {
+                    b.Navigation("Files");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.TransportOrder", b =>
+                {
+                    b.Navigation("Documents");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Trip", b =>
+                {
+                    b.Navigation("Expenses");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Points");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.WarehouseProduct", b =>
+                {
+                    b.Navigation("Movements");
                 });
 #pragma warning restore 612, 618
         }

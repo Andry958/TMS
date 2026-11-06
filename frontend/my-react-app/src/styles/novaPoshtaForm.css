@@ -1,0 +1,92 @@
+.nova-poshta-form {
+  width: 100%;
+  margin: 0 0 1.5rem;
+}
+
+.nova-poshta-form__card {
+  overflow: hidden;
+  border: 1px solid #e6eaf0;
+  border-top: 3px solid #e60000;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 36px rgba(24, 39, 75, 0.08);
+}
+
+.nova-poshta-form__card > .card-body {
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.nova-poshta-form__heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.nova-poshta-form__icon {
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 14px;
+  background: #fff1f1;
+  font-size: 1.5rem;
+}
+
+.nova-poshta-form__heading h5 {
+  color: #202938;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.nova-poshta-form__heading p {
+  color: #738094;
+  font-size: 0.9rem;
+}
+
+.nova-poshta-form__panel {
+  height: 100%;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid #e8ecf2;
+  border-radius: 14px;
+  background: #f9fafc;
+}
+
+.nova-poshta-form__panel-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  color: #c90000;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.nova-poshta-form .form-label {
+  margin-bottom: 0.4rem;
+  color: #414c5d;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.nova-poshta-form .form-control {
+  min-height: 44px;
+}
+
+.nova-poshta-form .form-control:focus {
+  border-color: #e60000;
+  box-shadow: 0 0 0 0.2rem rgba(230, 0, 0, 0.12);
+}
+
+@media (max-width: 575.98px) {
+  .nova-poshta-form__heading {
+    gap: 0.75rem;
+  }
+
+  .nova-poshta-form__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 12px;
+  }
+}

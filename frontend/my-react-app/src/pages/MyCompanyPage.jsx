@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useCompany } from "../context/CompanyContext";
 import { useApi } from "../context/ApiContext";
 import NovaPoshtaDisplay from "../components/common/NovaPoshtaDisplay";
+import "../styles/my-company.css";
 
 
 function Section({ title, children }) {
   return (
-    <div className="card shadow-sm h-100">
+    <div className="card shadow-sm h-100 my-company-card">
       <div className="card-body">
-        <h5 className="mb-3">{title}</h5>
+        <h5 className="mb-3 my-company-card__title">{title}</h5>
         {children}
       </div>
     </div>
@@ -16,10 +17,9 @@ function Section({ title, children }) {
 }
 
 function MyCompanyPage({ setActiveSection }) {
-  const { companyId, setCompanyId, logout } = useCompany();
+  const { companyId } = useCompany();
   const { apiData } = useApi();
   const [company, setCompany] = useState(null);
-  const [companyIdInput, setCompanyIdInput] = useState("");
   const [error, setError] = useState("");
 
   const API_URL = `${apiData}/company`;
@@ -44,41 +44,14 @@ function MyCompanyPage({ setActiveSection }) {
   }, [companyId, API_URL]);
 
   if (!companyId) {
-    const handleLogin = async (e) => {
-      e.preventDefault();
-
-      if (!companyIdInput.trim()) {
-        setError("Введіть ID компанії");
-        return;
-      }
-
-      const res = await fetch(`${API_URL}/${companyIdInput}`);
-      if (!res.ok) {
-        setError("Компанія не знайдена");
-        return;
-      }
-      setCompanyId(parseInt(companyIdInput));
-      setError("");
-    };
-
     return (
-      <div className="container mt-5">
-        <div className="card p-4 shadow-sm col-md-6 mx-auto">
-          <h4 className="mb-3">Вхід до компанії</h4>
-          <div>
-            <input
-              className="form-control mb-3"
-              type="number"
-              placeholder="ID компанії"
-              value={companyIdInput}
-              onChange={e => setCompanyIdInput(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && handleLogin(e)}
-            />
-            {error && <div className="alert alert-danger">{error}</div>}
-            <button className="btn btn-primary w-100" onClick={handleLogin}>
-              Увійти
-            </button>
-          </div>
+      <div className="my-company-page">
+        <div className="card p-4 shadow-sm my-company-card">
+          <h4 className="mb-2">Компанію ще не створено</h4>
+          <p className="text-muted mb-3">Створіть компанію, щоб почати роботу. Вона буде прив’язана до вашого облікового запису.</p>
+          <button className="btn btn-primary align-self-start" onClick={() => setActiveSection("settings")}>
+            Створити компанію
+          </button>
         </div>
       </div>
     );
@@ -86,7 +59,7 @@ function MyCompanyPage({ setActiveSection }) {
 
   if (!company) {
     return (
-      <div className="container mt-5">
+      <div className="my-company-page">
         {error ? (
           <div className="alert alert-danger" role="alert">
             <h4 className="alert-heading">Помилка!</h4>
@@ -165,18 +138,18 @@ function MyCompanyPage({ setActiveSection }) {
   const managementPeople = company.managementPeaple || [];
 
   return (
-    <div className="container mt-5">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>{company.name}</h2>
-        <div className="d-flex gap-2">
-          <button 
-            className="btn btn-primary" 
+    <div className="my-company-page">
+      <div className="sticky-action-bar my-company-actions">
+        <div className="my-company-heading">
+          <span className="my-company-eyebrow">ПРОФІЛЬ КОМПАНІЇ</span>
+          <h1 className="mb-0">{company.name}</h1>
+        </div>
+        <div className="my-company-actions__controls">
+          <button
+            className="btn btn-primary"
             onClick={() => setActiveSection("editcompany")}
           >
             ✏️ Редагувати
-          </button>
-          <button className="btn btn-danger" onClick={logout}>
-            🚪 Вийти
           </button>
         </div>
       </div>
@@ -184,9 +157,9 @@ function MyCompanyPage({ setActiveSection }) {
       {/* ===== РЯД 1 ===== */}
       <div className="row g-4 mb-4">
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 my-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>🏢 Основна інформація</h5>
+              <h5 className="mb-3 my-company-card__title">🏢 Основна інформація</h5>
               <p className="mb-2"><strong>Тип:</strong> {company.companyType || "—"}</p>
               <p className="mb-2"><strong>ЄДРПОУ:</strong> {company.codeCompany || "—"}</p>
               <p className="mb-2"><strong>ІПН:</strong> {company.ipn || "—"}</p>
@@ -196,9 +169,9 @@ function MyCompanyPage({ setActiveSection }) {
         </div>
 
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 my-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>👥 Керівництво та персонал</h5>
+              <h5 className="mb-3 my-company-card__title">👥 Керівництво та персонал</h5>
               {managementPeople.length > 0 ? (
                 <div>
                   {managementPeople.map((person, index) => (
@@ -227,20 +200,20 @@ function MyCompanyPage({ setActiveSection }) {
       {/* ===== РЯД 2 ===== */}
       <div className="row g-4 mb-4">
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 my-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>📞 Контактна інформація</h5>
+              <h5 className="mb-3 my-company-card__title">📞 Контактна інформація</h5>
               <p className="mb-2"><strong>Телефон:</strong> {phone || "—"}</p>
-              <p className="mb-2"><strong>Email:</strong> {email || "—"}</p>
+              <p className="mb-2"><strong>Електронна пошта:</strong> {email || "—"}</p>
               <p className="mb-0"><strong>Сайт:</strong> {website || "—"}</p>
             </div>
           </div>
         </div>
 
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 my-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>📍 Юридична адреса</h5>
+              <h5 className="mb-3 my-company-card__title">📍 Юридична адреса</h5>
               <p className="mb-2"><strong>Адреса:</strong> {legal.streetAddress || "—"} {legal.buildingNumber || ""}, кв.(офіс) {legal.apartmentNumber || "—"}</p>
               <p className="mb-2"><strong>Населений пункт/Регіон:</strong> {legal.city || "—"}, {legal.region || "—"}</p>
               <p className="mb-0"><strong>Країна/Індекс:</strong> {legal.country || "—"}, {legal.postalCode || "—"}</p>
@@ -252,9 +225,9 @@ function MyCompanyPage({ setActiveSection }) {
       {/* ===== РЯД 3 ===== */}
       <div className="row g-4 mb-4">
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 my-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>📮 Укр. пошта</h5>
+              <h5 className="mb-3 my-company-card__title">📮 Укр. пошта</h5>
               <p className="mb-2"><strong>Адреса:</strong> {ukrPoshta.streetAddress || "—"} {ukrPoshta.buildingNumber || ""}</p>
               <p className="mb-2"><strong>Кв.(офіс):</strong> {ukrPoshta.apartmentNumber || "—"}</p>
               <p className="mb-2"><strong>Населений пункт/Регіон:</strong> {ukrPoshta.city || "—"}, {ukrPoshta.region || "—"}</p>
@@ -264,9 +237,9 @@ function MyCompanyPage({ setActiveSection }) {
         </div>
 
         <div className="col-md-6">
-          <div className="card shadow-sm h-100" style={{ borderLeft: '4px solid #e60000' }}>
+          <div className="card shadow-sm h-100 my-company-card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#e60000' }}>📝 Додаткова інформація</h5>
+              <h5 className="mb-3 my-company-card__title">📝 Додаткова інформація</h5>
               <p className="mb-0">{company.additionalInfo || "Немає додаткової інформації"}</p>
             </div>
           </div>
@@ -279,14 +252,14 @@ function MyCompanyPage({ setActiveSection }) {
       {/* ===== РЯД 4 - Банківські реквізити (список) ===== */}
       <div className="row g-4 mb-4">
         <div className="col-12">
-          <div className="card shadow-sm">
+          <div className="card shadow-sm my-company-card">
             <div className="card-body">
-              <h5 className="mb-3">Банківські реквізити</h5>
+              <h5 className="mb-3 my-company-card__title">Банківські реквізити</h5>
               {company.bankDetails && company.bankDetails.length > 0 ? (
                 <div className="row g-3">
                   {company.bankDetails.map((bank, index) => (
                     <div key={index} className="col-md-6">
-                      <div className="card border">
+                      <div className="card border my-company-bank-card">
                         <div className="card-body">
                           <h6 className="card-title">
                             Рахунок #{index + 1} 
@@ -342,12 +315,14 @@ function MyCompanyPage({ setActiveSection }) {
       </div>
 
       {/* ===== РЯД 5 ===== */}
-      <div className="col-md-12">
+      <div className="row g-4 mb-4">
+        <div className="col-md-12 my-company-integrations">
           <Section title="API інтеграції">
             <p><strong>Nova Poshta:</strong> {company.apiKeys?.novaPoshta ? "Налаштовано ✓" : "Не налаштовано"}</p>
             <p><strong>LardyTrans:</strong> {company.apiKeys?.lardyTrans ? "Налаштовано ✓" : "Не налаштовано"}</p>
           </Section>
         </div>
+      </div>
       
     </div>
   );

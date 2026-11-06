@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 const APIContext = createContext(null);
 
 export function ApiProvider({ children }) {
-  const [apiData, setApiData] = useState("http://92.52.132.62:7060/api");
+  const [apiData, setApiData] = useState(`${window.location.origin}/api`);
 
   const logout = () => {
     setApiData(null);

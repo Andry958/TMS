@@ -43,6 +43,8 @@ namespace DataAccess.Data.Entities
         public ApiKeys ApiKeys { get; set; } = new ApiKeys();
 
         public List<Tracking> CompanyTrackings { get; set; } = new List<Tracking>();
+        public List<FleetVehicle> FleetVehicles { get; set; } = new List<FleetVehicle>();
+        public List<Driver> Drivers { get; set; } = new List<Driver>();
 
         [NotMapped]
         public bool IsClient => ParentCompanyId.HasValue;

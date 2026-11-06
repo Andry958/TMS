@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useToast } from "../../context/useToast";
 
 const positionTypes = [
   { value: 0, name: "Директор" },
@@ -8,6 +9,7 @@ const positionTypes = [
 ];
 
 function ClientPeople({ people, isEditing, onAdd, onDelete }) {
+  const { pushToast } = useToast();
   const [newPerson, setNewPerson] = useState({
     fullName: "",
     position: 2,
@@ -22,7 +24,7 @@ function ClientPeople({ people, isEditing, onAdd, onDelete }) {
 
   const handleAdd = () => {
     if (!newPerson.fullName.trim()) {
-      alert("Введіть ім'я працівника");
+      pushToast("Введіть ім'я працівника", "warning");
       return;
     }
     onAdd(newPerson);
@@ -75,7 +77,7 @@ function ClientPeople({ people, isEditing, onAdd, onDelete }) {
                   <input className="form-control" name="phoneNumber" value={newPerson.phoneNumber} onChange={handleChange} placeholder="+380..." />
                 </div>
                 <div className="mb-2">
-                  <label className="form-label">Email</label>
+                  <label className="form-label">Електронна пошта</label>
                   <input className="form-control" type="email" name="email" value={newPerson.email} onChange={handleChange} placeholder="email@example.com" />
                 </div>
                 <button className="btn btn-success btn-sm w-100" onClick={handleAdd}>+ Додати працівника</button>

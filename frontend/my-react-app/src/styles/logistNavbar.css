@@ -1,0 +1,305 @@
+.logist-header {
+  position: sticky;
+  top: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-height: 64px;
+  padding: 0 14px;
+  color: #f4f6f8;
+  background: #20292d;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 14px rgba(11, 18, 22, 0.16);
+}
+
+.logist-header button {
+  color: inherit;
+  font: inherit;
+}
+
+.logist-header__hamburger,
+.logist-mobile-toggle,
+.logist-tool,
+.logist-brand,
+.logist-menu__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.logist-header__hamburger {
+  width: 38px;
+  flex: 0 0 38px;
+  color: #aab3b7 !important;
+}
+
+.logist-header svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.logist-brand {
+  gap: 7px;
+  flex: 0 0 175px;
+  justify-content: flex-start;
+  padding: 0 10px 0 8px;
+  color: #f6f7f7 !important;
+  font-size: 22px !important;
+  font-weight: 500 !important;
+  letter-spacing: -1px;
+  white-space: nowrap;
+}
+
+.logist-brand__logo {
+  display: block;
+  width: 56px;
+  height: 42px;
+  flex: 0 0 auto;
+  border-radius: 5px;
+  background: #dce8f5;
+  object-fit: contain;
+}
+
+.logist-brand__name {
+  color: #f6f7f7;
+}
+
+.logist-brand small {
+  font-size: 9px;
+  letter-spacing: 0;
+}
+
+.logist-brand__mark {
+  color: #ef454d;
+  font-size: 29px;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.logist-menu {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.logist-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.logist-menu__item {
+  position: relative;
+  flex: 1 0 77px;
+  min-width: 72px;
+  max-width: 108px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 6px 6px;
+  color: #d8dcdd !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.logist-menu__item svg {
+  width: 25px;
+  height: 25px;
+}
+
+.logist-menu__item:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.logist-menu__item.is-active {
+  color: #fff !important;
+  background: #397fc7;
+  box-shadow: inset 0 -3px 0 #80baf0;
+}
+
+.logist-tools {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 3px;
+  margin-left: 6px;
+  border-left: 1px solid rgba(255, 255, 255, 0.13);
+  padding-left: 8px;
+}
+
+.logist-tool {
+  position: relative;
+  width: 34px;
+  height: 40px;
+  color: #aeb8bc !important;
+}
+
+.logist-tool:hover,
+.logist-header__hamburger:hover {
+  color: #fff !important;
+}
+
+.logist-tool svg {
+  width: 20px;
+  height: 20px;
+}
+
+.logist-tool--language {
+  gap: 5px;
+  width: auto;
+  padding: 0 5px;
+  font-size: 12px !important;
+}
+
+.logist-tool--language svg {
+  width: 17px;
+  height: 17px;
+}
+
+.logist-tool--notification > span {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  display: grid;
+  width: 15px;
+  height: 15px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #e83d42;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.logist-mobile-toggle {
+  display: none;
+  width: 40px;
+}
+
+.logist-extra-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 12px;
+  z-index: 1060;
+  display: flex;
+  min-width: 220px;
+  flex-direction: column;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: #20292d;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.logist-extra-menu button {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #e3e7e8;
+  text-align: left;
+  cursor: pointer;
+}
+
+.logist-extra-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+@media (max-width: 1100px) {
+  .logist-header {
+    min-height: 58px;
+    padding-inline: 8px;
+  }
+
+  .logist-brand {
+    flex-basis: 160px;
+    gap: 5px;
+    font-size: 20px !important;
+  }
+
+  .logist-menu__item {
+    flex-basis: 70px;
+    min-width: 66px;
+    padding-inline: 4px;
+    font-size: 10px !important;
+  }
+
+  .logist-tools {
+    gap: 0;
+    padding-left: 4px;
+  }
+
+  .logist-tool {
+    width: 30px;
+  }
+}
+
+@media (max-width: 760px) {
+  .logist-header {
+    min-height: 58px;
+    align-items: center;
+  }
+
+  .logist-header__hamburger {
+    display: none;
+  }
+
+  .logist-brand {
+    flex: 1 1 auto;
+  }
+
+  .logist-brand__logo {
+    width: 48px;
+    height: 36px;
+  }
+
+  .logist-mobile-toggle {
+    display: inline-flex;
+  }
+
+  .logist-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    max-height: calc(100vh - 58px);
+    flex-wrap: wrap;
+    overflow-y: auto;
+    padding: 8px;
+    background: #20292d;
+    border-top: 1px solid rgba(255,255,255,.1);
+  }
+
+  .logist-menu.is-open {
+    display: flex;
+  }
+
+  .logist-menu__item {
+    flex: 1 0 30%;
+    max-width: none;
+    min-height: 62px;
+    border-radius: 5px;
+  }
+
+  .logist-tools {
+    margin-left: 4px;
+  }
+
+  .logist-tool--optional {
+    display: none;
+  }
+}

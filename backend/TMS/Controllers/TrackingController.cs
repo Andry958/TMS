@@ -1,15 +1,18 @@
-﻿using DataAccess.Data;
+using DataAccess.Data;
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
+using System.Security.Claims;
 
 namespace TMS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TrackingController : ControllerBase
     {
         private readonly TMSDbContext _ctx;
@@ -21,6 +24,14 @@ namespace TMS.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
+        private async Task<int?> GetCurrentCompanyIdAsync()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null) return null;
+            return await _ctx.Users.Where(user => user.Id == userId)
+                .Select(user => user.CompanyId).SingleOrDefaultAsync();
+        }
+
         // ================= GET BY COMPANY WITH PAGINATION =================
         [HttpGet("company/{companyId}")]
         public async Task<IActionResult> GetTrackingsByCompanyId(
@@ -29,6 +40,7 @@ namespace TMS.Controllers
             [FromQuery] int? pageSize = null,
             [FromQuery] string sortOrder = "desc")
         {
+            if (await GetCurrentCompanyIdAsync() != companyId) return NotFound("Company not found");
             var companyExists = await _ctx.Companies.AnyAsync(c => c.Id == companyId);
             if (!companyExists) return NotFound("Company not found");
 
@@ -67,6 +79,7 @@ namespace TMS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddTracking([FromBody] AddTrackingDto dto)
         {
+            if (await GetCurrentCompanyIdAsync() != dto.IdCompany) return NotFound("Company not found");
             var company = await _ctx.Companies
                 .Include(c => c.ApiKeys)
                 .FirstOrDefaultAsync(c => c.Id == dto.IdCompany);
@@ -100,8 +113,12 @@ namespace TMS.Controllers
         {
             if (updates == null || updates.Count == 0) return BadRequest("No updates provided");
 
+            var companyId = await GetCurrentCompanyIdAsync();
+            if (!companyId.HasValue) return Forbid();
             var ids = updates.Select(u => u.Id).ToList();
-            var trackingsToUpdate = await _ctx.Trackings.Where(t => ids.Contains(t.Id)).ToListAsync();
+            var trackingsToUpdate = await _ctx.Trackings
+                .Where(t => ids.Contains(t.Id) && t.CompanyId == companyId.Value).ToListAsync();
+            if (trackingsToUpdate.Count != ids.Distinct().Count()) return NotFound("One or more trackings were not found");
 
             foreach (var tracking in trackingsToUpdate)
             {
@@ -128,7 +145,9 @@ namespace TMS.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTracking(int id)
         {
-            var tracking = await _ctx.Trackings.FindAsync(id);
+            var companyId = await GetCurrentCompanyIdAsync();
+            if (!companyId.HasValue) return NotFound("Tracking not found");
+            var tracking = await _ctx.Trackings.FirstOrDefaultAsync(item => item.Id == id && item.CompanyId == companyId.Value);
             if (tracking == null) return NotFound("Tracking not found");
 
             _ctx.Trackings.Remove(tracking);
@@ -141,6 +160,7 @@ namespace TMS.Controllers
         [HttpPut("refresh-np/{companyId}")]
         public async Task<IActionResult> RefreshNPData(int companyId)
         {
+            if (await GetCurrentCompanyIdAsync() != companyId) return NotFound("Company not found");
             var company = await _ctx.Companies
                 .Include(c => c.ApiKeys)
                 .FirstOrDefaultAsync(c => c.Id == companyId);

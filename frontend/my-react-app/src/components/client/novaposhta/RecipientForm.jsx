@@ -1,18 +1,20 @@
 import { useEffect } from "react";
+import { useToast } from "../../../context/useToast";
 
 function RecipientForm({ form, isEditing, onChange, onEdrpouSearch }) {
+  const { pushToast } = useToast();
   // Автопошук при зміні ЄДРПОУ
   useEffect(() => {
     if (isEditing && form.nP_EdrpouCode && form.nP_EdrpouCode.length === 8) {
       const timeout = setTimeout(async () => {
         const result = await onEdrpouSearch(form.nP_EdrpouCode);
         if (result) {
-          alert("✅ Компанію знайдено в Новій Пошті");
+          pushToast("✅ Компанію знайдено в Новій Пошті", "success");
         }
       }, 600);
       return () => clearTimeout(timeout);
     }
-  }, [form.nP_EdrpouCode, isEditing]);
+  }, [form.nP_EdrpouCode, isEditing, onEdrpouSearch, pushToast]);
 
   if (!isEditing) {
     // Режим перегляду

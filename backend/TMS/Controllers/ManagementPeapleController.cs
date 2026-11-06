@@ -1,13 +1,16 @@
-﻿using DataAccess.Data;
+using DataAccess.Data;
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace TMS.Controllers
 {
     [Route("api/managementPeaple")]
     [ApiController]
+    [Authorize]
     public class ManagementPeapleController : ControllerBase
     {
         private readonly TMSDbContext ctx;
@@ -16,11 +19,21 @@ namespace TMS.Controllers
             this.ctx = ctx;
         }
 
+        private async Task<int?> GetCurrentCompanyIdAsync()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null) return null;
+            return await ctx.Users.Where(user => user.Id == userId)
+                .Select(user => user.CompanyId).SingleOrDefaultAsync();
+        }
+
         // ================= DELETE MANAGEMENT PEAPLE BY ID =================
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteManagementPeaple(int id)
         {
-            var peaple = await ctx.Peaples.FindAsync(id);
+            var companyId = await GetCurrentCompanyIdAsync();
+            if (!companyId.HasValue) return NotFound();
+            var peaple = await ctx.Peaples.FirstOrDefaultAsync(person => person.Id == id && person.CompanyId == companyId.Value);
             if (peaple == null)
             {
                 return NotFound("Management peaple not found");
@@ -34,8 +47,10 @@ namespace TMS.Controllers
         [HttpGet("bycompany/{id}")]
         public async Task<IActionResult> GetManagementPeapleByCompanyId(int id)
         {
+            var companyId = await GetCurrentCompanyIdAsync();
+            if (companyId != id) return NotFound();
             var peaples = await ctx.Peaples
-                .Where(p => p.CompanyId == id)
+                .Where(p => p.CompanyId == companyId.Value)
                 .ToListAsync();
 
             return Ok(peaples);
@@ -43,7 +58,9 @@ namespace TMS.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddManagementPeaple([FromBody] PeapleDto peaple, int companyId)
         {
-            var company = await ctx.Companies.FindAsync(companyId);
+            var ownedCompanyId = await GetCurrentCompanyIdAsync();
+            if (ownedCompanyId != companyId) return NotFound();
+            var company = await ctx.Companies.FindAsync(ownedCompanyId.Value);
             if (company == null)
             {
                 return NotFound("Company not found");

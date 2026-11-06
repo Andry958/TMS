@@ -2,9 +2,9 @@
    THEME VARIABLES
 ================================ */
 :root {
-  --primary-color: #5eb3e4;
-  --primary-hover: #4a9fd4;
-  --bg-light: #f8f9fa;
+  --primary-color: #5b5bf0;
+  --primary-hover: #4747d6;
+  --bg-light: #f4f6fb;
 }
 
 /* ===============================
@@ -85,7 +85,7 @@ body {
 }
 
 .table-hover tbody tr:hover {
-  background-color: rgba(94, 179, 228, 0.08);
+  background-color: rgba(91, 91, 240, 0.06);
 }
 
 /* ===============================

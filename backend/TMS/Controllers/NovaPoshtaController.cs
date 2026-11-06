@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using System.Text.Json;
 
@@ -6,6 +7,7 @@ namespace TMS.Controllers
 {
     [ApiController]
     [Route("api/novaposhta")]
+    [Authorize]
     public class NovaPoshtaController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;

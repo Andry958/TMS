@@ -1,6 +1,121 @@
 @TMS_HostAddress = http://localhost:5258
+@gpsSerial = DEVICE_SERIAL_OR_IMEI
+@telemetryFrom = 2026-10-23T09:00:00Z
+@telemetryTo = 2026-10-23T15:00:00Z
 
 GET {{TMS_HostAddress}}/weatherforecast/
 Accept: application/json
+
+###
+
+### Отримати збережену історію телеметрії GPS-пристрою (до 5000 точок у відповіді)
+GET {{TMS_HostAddress}}/api/globus/devices/{{gpsSerial}}/telemetry?from={{telemetryFrom}}&to={{telemetryTo}}
+Accept: application/json
+
+###
+
+@orderId = 1
+@requestId = 1
+
+### Повернути попередній статус замовлення
+POST {{TMS_HostAddress}}/api/orders/{{orderId}}/status/undo
+Accept: application/json
+
+###
+
+### Повернути попередній статус запиту
+POST {{TMS_HostAddress}}/api/requests/{{requestId}}/status/undo
+Accept: application/json
+
+###
+
+### Отримати календар рейсів і доступних замовлень
+GET {{TMS_HostAddress}}/api/transport-planning?from=2026-10-01&to=2026-10-31
+Accept: application/json
+
+### Створити рейс або додати замовлення до наявного рейсу
+POST {{TMS_HostAddress}}/api/transport-planning/orders/1/schedule
+Content-Type: application/json
+
+{
+  "vehicleId": 1,
+  "scheduledDate": "2026-10-21",
+  "tripId": null
+}
+
+###
+
+### Отримати фінансові записи компанії
+GET {{TMS_HostAddress}}/api/finance
+Accept: application/json
+
+### Додати фінансовий запис
+POST {{TMS_HostAddress}}/api/finance
+Content-Type: application/json
+
+{
+  "type": "income",
+  "category": "Оплата замовлення",
+  "description": "Оплата за перевезення",
+  "amount": 12500,
+  "currency": "UAH",
+  "status": "paid",
+  "date": "2026-10-22"
+}
+
+###
+
+### Переглянути товари складу та рухи
+GET {{TMS_HostAddress}}/api/warehouse/products
+Accept: application/json
+
+###
+GET {{TMS_HostAddress}}/api/warehouse/movements
+Accept: application/json
+
+### Додати товар на склад
+POST {{TMS_HostAddress}}/api/warehouse/products
+Content-Type: application/json
+
+{
+  "name": "Палети",
+  "sku": "PAL-001",
+  "category": "Пакування",
+  "unit": "шт",
+  "quantity": 20,
+  "minimumQuantity": 5
+}
+
+###
+
+### Переглянути реєстр документів
+GET {{TMS_HostAddress}}/api/documents
+Accept: application/json
+
+### Створити запис документа
+POST {{TMS_HostAddress}}/api/documents
+Content-Type: application/json
+
+{
+  "title": "Договір перевезення",
+  "type": "Договір",
+  "number": "ДП-2026-01",
+  "owner": "ТОВ Приклад",
+  "issueDate": "2026-10-22",
+  "expiryDate": null,
+  "status": "Активний",
+  "notes": ""
+}
+
+### Завантаження файла потребує multipart/form-data з полем file
+POST {{TMS_HostAddress}}/api/documents/1/file
+Content-Type: multipart/form-data; boundary=UploadBoundary
+
+--UploadBoundary
+Content-Disposition: form-data; name="file"; filename="document.pdf"
+Content-Type: application/pdf
+
+< ./document.pdf
+--UploadBoundary--
 
 ###

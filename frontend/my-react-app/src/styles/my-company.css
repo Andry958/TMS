@@ -1,0 +1,302 @@
+.my-company-page {
+  width: 100%;
+  margin: 0;
+  padding: 1.25rem clamp(1rem, 2vw, 2rem) 2.5rem;
+  color: #20283a;
+}
+
+.my-company-page .my-company-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.my-company-heading {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.my-company-eyebrow {
+  color: #718098;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+}
+
+.my-company-actions h1 {
+  overflow-wrap: anywhere;
+  color: #20283a;
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+  font-weight: 750;
+  letter-spacing: -0.025em;
+}
+
+.my-company-page .my-company-card {
+  height: 100%;
+  border: 1px solid #dce4ef;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgba(35, 52, 77, 0.045) !important;
+}
+
+.my-company-page .card[style*="border-left"] {
+  border: 1px solid #dce4ef !important;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgba(35, 52, 77, 0.045) !important;
+}
+
+.my-company-page h5[style],
+.my-company-page h6[style] {
+  color: #35445c !important;
+}
+
+.my-company-page .my-company-card > .card-body {
+  padding: 1.25rem;
+}
+
+.my-company-card__title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e8edf4;
+  color: #35445c;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.my-company-page p {
+  color: #46546a;
+  line-height: 1.55;
+}
+
+.my-company-page p strong,
+.my-company-page .card-title {
+  color: #27364c;
+}
+
+.my-company-page .my-company-bank-card {
+  border-color: #e1e7f0 !important;
+  border-radius: 10px;
+  background: #f9fbfe;
+  box-shadow: none !important;
+}
+
+.my-company-page .my-company-bank-card .card-body {
+  padding: 1rem;
+}
+
+.my-company-page .my-company-bank-card hr {
+  border-color: #e1e7f0;
+  opacity: 1;
+}
+
+.my-company-page .my-company-subcard {
+  height: 100%;
+  border-color: #e1e7f0 !important;
+  background: #f7f9fc;
+}
+
+.my-company-page .my-company-integrations .card-body > p:last-child {
+  margin-bottom: 0;
+}
+
+.edit-company-page {
+  width: 100%;
+  margin: 0;
+  padding: 1.25rem clamp(1rem, 2vw, 2rem) 2.5rem;
+  color: #20283a;
+}
+
+.edit-company-page .edit-company-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.edit-company-page .company-edit-actions__title {
+  flex-wrap: wrap;
+}
+
+.edit-company-heading {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.edit-company-heading h1 {
+  color: #20283a;
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+  font-weight: 750;
+  letter-spacing: -0.025em;
+}
+
+.edit-company-page .edit-company-card {
+  height: 100%;
+  border: 1px solid #dce4ef;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgba(35, 52, 77, 0.045) !important;
+}
+
+.edit-company-page .edit-company-card > .card-body {
+  padding: 1.25rem;
+}
+
+.edit-company-card__title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e8edf4;
+  color: #35445c;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.edit-company-subtitle {
+  color: #35445c;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.edit-company-page .form-label {
+  color: #35445c;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.edit-company-page .form-control,
+.edit-company-page .form-select {
+  min-height: 42px;
+  border: 1px solid #b9c5d5;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #20283a;
+}
+
+.edit-company-page .form-control::placeholder {
+  color: #78869a;
+  opacity: 1;
+}
+
+.edit-company-page .form-control:focus,
+.edit-company-page .form-select:focus {
+  border-color: #6583ae;
+  box-shadow: 0 0 0 0.2rem rgba(63, 104, 160, 0.16);
+}
+
+.edit-company-page .edit-company-subcard,
+.edit-company-page .nova-poshta-form__panel {
+  border-color: #e1e7f0 !important;
+  border-radius: 10px;
+  background: #f7f9fc;
+}
+
+.edit-company-page .list-group-item {
+  border-color: #e1e7f0;
+  background: #fff;
+  color: #35445c;
+}
+
+.edit-company-page .edit-company-bank-card {
+  border-color: #e1e7f0 !important;
+  border-radius: 10px;
+  background: #f9fbfe;
+  box-shadow: none !important;
+}
+
+.edit-company-page .edit-company-bank-card .card-body {
+  padding: 1rem;
+}
+
+.edit-company-page .nova-poshta-form__card {
+  border: 1px solid #dce4ef;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(35, 52, 77, 0.045);
+}
+
+.edit-company-page .nova-poshta-form__icon {
+  background: #edf3fa;
+}
+
+.edit-company-page .nova-poshta-form__panel-title {
+  color: #35445c;
+}
+
+.edit-company-page .nova-poshta-form .form-control:focus {
+  border-color: #6583ae;
+  box-shadow: 0 0 0 0.2rem rgba(63, 104, 160, 0.16);
+}
+
+.edit-company-page .card[style*="border-left"] {
+  border: 1px solid #dce4ef !important;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgba(35, 52, 77, 0.045) !important;
+}
+
+.edit-company-page h5[style],
+.edit-company-page h6[style],
+.edit-company-page .nova-poshta-form__panel-title {
+  color: #35445c !important;
+}
+
+.edit-company-page .my-company-card__title {
+  color: #35445c;
+}
+
+@media (max-width: 760px) {
+  .my-company-page {
+    padding: 0.85rem 0.85rem 1.5rem;
+  }
+
+  .my-company-page .my-company-actions {
+    align-items: flex-start;
+  }
+
+  .my-company-page .my-company-card > .card-body {
+    padding: 1rem;
+  }
+
+  .edit-company-page {
+    padding: 0.85rem 0.85rem 1.5rem;
+  }
+
+  .edit-company-page .edit-company-actions {
+    align-items: flex-start;
+  }
+
+  .edit-company-page .edit-company-card > .card-body {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .my-company-page .my-company-actions {
+    flex-wrap: wrap;
+  }
+
+  .my-company-page .my-company-actions__controls {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .edit-company-page .edit-company-actions {
+    flex-wrap: wrap;
+  }
+
+  .edit-company-page .company-edit-actions__title {
+    width: 100%;
+  }
+
+  .edit-company-page .company-edit-actions__controls {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
