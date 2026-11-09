@@ -27,10 +27,10 @@ public sealed class CreateTransportRequest
     [Required, MaxLength(500)]
     public string CargoDescription { get; set; } = "";
 
-    [Range(typeof(decimal), "0.001", "999999")]
+    [Range(typeof(decimal), "0.001", "999999", ParseLimitsInInvariantCulture = true)]
     public decimal? WeightTons { get; set; }
 
-    [Range(typeof(decimal), "0.01", "999999999")]
+    [Range(typeof(decimal), "0.01", "999999999", ParseLimitsInInvariantCulture = true)]
     public decimal? Rate { get; set; }
 
     [Required, RegularExpression("^(UAH|USD|EUR|PLN|GBP)$")]

@@ -119,7 +119,6 @@ function NovaPoshtaForm({ form, setForm, isEditing, apiNovaPoshta }) {
         url.searchParams.append('warehouseType', warehouseType);
       }
       
-      console.log("Запит відділень:", url.toString());
       const res = await fetch(url);
       const json = await res.json();
       console.log("Відповідь відділень:", json);
@@ -340,6 +339,9 @@ function NovaPoshtaForm({ form, setForm, isEditing, apiNovaPoshta }) {
                           disabled={!isEditing || !form?.npD_City || npWarehouses.length === 0}
                         >
                           <option value="">Оберіть відділення</option>
+                          {form?.npD_Branch && !npWarehouses.some(warehouse => warehouse.Description === form.npD_Branch) && (
+                            <option value={form.npD_Branch}>{form.npD_Branch}</option>
+                          )}
                           {npWarehouses
                             .filter(warehouse => (warehouse.Description || "").toLowerCase().includes(warehouseSearchTerm.toLowerCase()))
                             .map(warehouse => (

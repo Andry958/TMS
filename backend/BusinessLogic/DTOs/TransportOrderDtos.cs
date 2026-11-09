@@ -30,13 +30,13 @@ public sealed class CreateTransportOrder
     [MaxLength(100)]
     public string? ContractNumber { get; set; }
 
-    [Range(typeof(decimal), "0.01", "999999999")]
+    [Range(typeof(decimal), "0.01", "999999999", ParseLimitsInInvariantCulture = true)]
     public decimal InitialRate { get; set; }
 
     [Required, RegularExpression("^(UAH|USD|EUR|PLN|GBP)$")]
     public string Currency { get; set; } = "UAH";
 
-    [Range(typeof(decimal), "0", "100")]
+    [Range(typeof(decimal), "0", "100", ParseLimitsInInvariantCulture = true)]
     public decimal? VatRate { get; set; }
 
     [MaxLength(500)]
@@ -64,7 +64,7 @@ public sealed class CreateTransportOrder
     [MaxLength(500)]
     public string? CargoDescription { get; set; }
 
-    [Range(typeof(decimal), "0.001", "999999")]
+    [Range(typeof(decimal), "0.001", "999999", ParseLimitsInInvariantCulture = true)]
     public decimal? WeightTons { get; set; }
 
     [MaxLength(2000)]

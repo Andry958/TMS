@@ -12,6 +12,17 @@ import NovaPoshtaDisplay from "../components/common/NovaPoshtaDisplay";
 import NovaPoshtaForm from "../components/common/NovaPoshtaForm";
 import { UAH_CURRENCY_CODE, createEmptyBankDetails, normalizeCurrencyCode } from "../constants/bankDetails";
 
+function normalizeClient(client) {
+  return {
+    ...client,
+    novaPoshtaRecipientType: client.novaPoshtaRecipientType == null ? "" : String(client.novaPoshtaRecipientType),
+    novaPoshtaDeliveryType: client.novaPoshtaDeliveryType == null ? "" : String(client.novaPoshtaDeliveryType),
+    bankDetails: client.bankDetails?.length
+      ? client.bankDetails.map(bank => ({ ...bank, currency: normalizeCurrencyCode(bank.currency) }))
+      : [createEmptyBankDetails()]
+  };
+}
+
 function ActualAddress({ form, isEditing, onChange }) {
   const fields = [
     ["StreetAddress", "Вулиця"],
@@ -71,16 +82,7 @@ function ClientCard() {
       const response = await fetch(`${apiData}/client/${clientId}?companyId=${companyId}`);
       if (!response.ok) throw new Error("Не вдалося завантажити клієнта");
       const client = await response.json();
-      client.novaPoshtaRecipientType = client.novaPoshtaRecipientType == null
-        ? ""
-        : String(client.novaPoshtaRecipientType);
-      client.novaPoshtaDeliveryType = client.novaPoshtaDeliveryType == null
-        ? ""
-        : String(client.novaPoshtaDeliveryType);
-      client.bankDetails = client.bankDetails?.length
-        ? client.bankDetails.map(bank => ({ ...bank, currency: normalizeCurrencyCode(bank.currency) }))
-        : [createEmptyBankDetails()];
-      setForm(client);
+      setForm(normalizeClient(client));
       setPeople(client.contactPersons || []);
     } catch (error) {
       console.error("Помилка завантаження компанії-клієнта:", error);
@@ -131,7 +133,7 @@ function ClientCard() {
       });
       if (!response.ok) throw new Error("Не вдалося зберегти зміни");
       const updated = await response.json();
-      setForm(updated);
+      setForm(normalizeClient(updated));
       setPeople(updated.contactPersons || []);
       setIsEditing(false);
       pushToast("Дані компанії-клієнта збережено", "success");

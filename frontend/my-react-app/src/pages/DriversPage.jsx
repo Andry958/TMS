@@ -375,6 +375,7 @@ function DriversPage() {
       </div>
 
       {driverForm && <div className="drivers-modal-backdrop"><form className="drivers-form-modal" onSubmit={saveDriver}>
+        {error && <div className="drivers-error" role="alert">{error}<button type="button" onClick={() => setError("")}>×</button></div>}
         <header><h2>{editingDriverId ? "Редагування водія" : "Новий водій"}</h2><button type="button" onClick={() => setDriverForm(null)}>×</button></header>
         <label>ПІБ<input required maxLength={160} value={driverForm.fullName} onChange={(event) => setDriverForm({ ...driverForm, fullName: event.target.value })} /></label>
         <label>Телефон<input required maxLength={40} value={driverForm.phone} onChange={(event) => setDriverForm({ ...driverForm, phone: event.target.value })} /></label>
@@ -385,6 +386,7 @@ function DriversPage() {
       </form></div>}
 
       {documentForm && <div className="drivers-modal-backdrop"><form className="drivers-form-modal" onSubmit={saveDocument}>
+        {error && <div className="drivers-error" role="alert">{error}<button type="button" onClick={() => setError("")}>×</button></div>}
         <header><h2>{editingDocumentId ? "Редагування документа" : "Новий документ водія"}</h2><button type="button" onClick={() => setDocumentForm(null)}>×</button></header>
         <label>Тип документа<input required maxLength={80} value={documentForm.type} onChange={(event) => setDocumentForm({ ...documentForm, type: event.target.value })} /></label>
         <label>Номер<input maxLength={100} value={documentForm.number} onChange={(event) => setDocumentForm({ ...documentForm, number: event.target.value })} /></label>

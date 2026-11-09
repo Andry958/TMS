@@ -366,9 +366,7 @@ function RequestsPage() {
       </section>
 
       {isFormOpen && (
-        <div className="requests-modal-backdrop" role="presentation" onMouseDown={event => {
-          if (event.target === event.currentTarget && !isSaving) setIsFormOpen(false);
-        }}>
+        <div className="requests-modal-backdrop" role="presentation">
           <section className="requests-modal" role="dialog" aria-modal="true" aria-labelledby="requests-modal-title">
             <header className="requests-modal__heading">
               <div><span>НОВА ЗАЯВКА</span><h2 id="requests-modal-title">Створити запит</h2></div>

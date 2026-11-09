@@ -333,7 +333,7 @@ function CompanySettingsPage({ setActiveSection }) {
     }, 600);
 
     return () => clearTimeout(timeout);
-  }, [form?.nP_EdrpouCode, form?.apiNovaPoshtaKey, pushToast]);
+  }, [form?.nP_EdrpouCode, form?.apiNovaPoshtaKey, pushToast, apiData]);
 
   // Пошук міст (autocomplete)
   useEffect(() => {
@@ -747,9 +747,7 @@ function CompanySettingsPage({ setActiveSection }) {
                               onChange={handleChange}
                             >
                               <option value="">Оберіть відділення</option>
-                              {npWarehouses
-                                .filter(w => w.CategoryOfWarehouse === 'Branch')
-                                .map(warehouse => (
+                              {npWarehouses.map(warehouse => (
                                   <option key={warehouse.Ref} value={warehouse.Description}>
                                     {warehouse.Description}
                                   </option>

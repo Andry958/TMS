@@ -81,11 +81,8 @@ function MyCompanyPage({ setActiveSection }) {
   }
 
   const currencyNames = {
-    0: "UAH",
-    1: "USD",
-    2: "EUR",
-    3: "PLN",
-    4: "GBP"
+    0: "UAH", 1: "USD", 2: "EUR", 3: "PLN", 4: "GBP",
+    980: "UAH", 840: "USD", 978: "EUR", 985: "PLN", 826: "GBP"
   };
 
   const accountTypeNames = {
@@ -107,7 +104,6 @@ function MyCompanyPage({ setActiveSection }) {
 
   const legal = company.legalAddress || {};
   const ukrPoshta = company.ukrPoshtaAddress || {};
-  const actual = company.actualAddress || {};
 
   // Підготовка даних Нової Пошти у форматі форми для NovaPoshtaDisplay
   const novaPoshtaForm = {
